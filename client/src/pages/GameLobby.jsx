@@ -1,0 +1,248 @@
+import { useState, useMemo } from 'react';
+import { useAuth } from '../context/AuthContext';
+import GameWrapper from '../components/GameWrapper';
+import CreateRoom from '../components/CreateRoom';
+import JoinRoom from '../components/JoinRoom';
+import MultiplayerGame from '../components/MultiplayerGame';
+
+const GAMES = [
+  // ── Arcade ──────────────────────────────────────────────────────────────────
+  { id:'snake',       emoji:'🐍', name:'Snake',          category:'Arcade', modes:['single'],        ready:true,  desc:"Eat food, grow longer, don't crash!" },
+  { id:'flappy',      emoji:'🐦', name:'Flappy Bird',    category:'Arcade', modes:['single'],        ready:true,  desc:'Tap to flap — survive the pipes!' },
+  { id:'breakout',    emoji:'🧱', name:'Breakout',       category:'Arcade', modes:['single'],        ready:true,  desc:'Smash all the bricks with the ball.' },
+  { id:'whackamole',  emoji:'🐹', name:'Whack-a-Mole',  category:'Arcade', modes:['single'],        ready:true,  desc:'Whack moles as fast as you can!' },
+  { id:'reaction',    emoji:'⚡', name:'Reaction Time',  category:'Arcade', modes:['single'],        ready:true,  desc:'How fast are your reflexes?' },
+  // ── Puzzle ──────────────────────────────────────────────────────────────────
+  { id:'memory',      emoji:'🧠', name:'Memory',         category:'Puzzle', modes:['single','duo'],  ready:true,  desc:'Find all matching pairs before time runs out.' },
+  { id:'2048',        emoji:'🎯', name:'2048',           category:'Puzzle', modes:['single'],        ready:true,  desc:'Slide tiles and reach 2048!' },
+  { id:'sudoku',      emoji:'🔢', name:'Sudoku',         category:'Puzzle', modes:['single'],        ready:true,  desc:'Fill the grid with 1–9. No repeats!' },
+  { id:'numberpuzzle',emoji:'🔷', name:'15 Puzzle',      category:'Puzzle', modes:['single'],        ready:true,  desc:'Slide tiles into order 1–15.' },
+  { id:'simon',       emoji:'🟢', name:'Simon Says',     category:'Puzzle', modes:['single'],        ready:true,  desc:'Repeat the growing colour pattern.' },
+  // ── Brain ───────────────────────────────────────────────────────────────────
+  { id:'wordscramble',emoji:'🔤', name:'Word Scramble',  category:'Brain',  modes:['single'],        ready:true,  desc:'Unscramble 10 words against the clock!' },
+  { id:'mathblaster', emoji:'🧮', name:'Math Blaster',   category:'Brain',  modes:['single'],        ready:true,  desc:'Rapid-fire mental maths. Get it fast!' },
+  { id:'colormatch',  emoji:'🌈', name:'Colour Match',   category:'Brain',  modes:['single'],        ready:true,  desc:'Tap the ink colour — not the word!' },
+  // ── Card & Board ─────────────────────────────────────────────────────────────
+  { id:'trivia',      emoji:'❓', name:'Trivia',         category:'Card',   modes:['single','duo','multi'], ready:true, desc:'10 questions, 15 seconds each.' },
+  { id:'tictactoe',   emoji:'❌', name:'Tic Tac Toe',   category:'Card',   modes:['single'],        ready:true,  desc:'vs AI or a friend on the same screen.' },
+  { id:'rps',         emoji:'✊', name:'Rock Paper Scissors', category:'Card', modes:['single'],   ready:true,  desc:'Best of 5 against the AI.' },
+  // ── Coming soon ──────────────────────────────────────────────────────────────
+  { id:'chess',       emoji:'♟',  name:'Chess',          category:'Card',   modes:['duo'],           ready:false, desc:'Classic chess vs AI or a friend.' },
+  { id:'uno',         emoji:'🃏', name:'UNO',            category:'Card',   modes:['duo','multi'],   ready:false, desc:'Play cards, call UNO, win!' },
+  { id:'ludo',        emoji:'🎲', name:'Ludo',           category:'Card',   modes:['multi'],         ready:false, desc:'Race all your pieces home first.' },
+  { id:'connect4',    emoji:'🔴', name:'Connect Four',   category:'Card',   modes:['single','duo'],  ready:false, desc:'Four in a row wins.' },
+];
+
+const CATEGORY_COLORS = {
+  Arcade: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  Puzzle: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  Brain:  'bg-teal-500/10   text-teal-400   border-teal-500/20',
+  Card:   'bg-pink-500/10   text-pink-400   border-pink-500/20',
+};
+
+const GameLobby = () => {
+  const { user } = useAuth();
+
+  // Navigation and Session States
+  const [soloGame, setSoloGame] = useState(null); 
+  const [mpView, setMpView]     = useState(null); // null | 'create' | 'join' | 'room'
+  const [mpRoom, setMpRoom]     = useState(null); // { roomCode, room }
+  
+  // Context state for creating a room directly from a game card
+  const [selectedMpGame, setSelectedMpGame] = useState(null); 
+
+  // Filter States
+  const [filter, setFilter]     = useState('All');
+  const [search, setSearch]     = useState('');
+  
+  const categories = ['All', 'Arcade', 'Puzzle', 'Brain', 'Card'];
+
+  // 🧠 Performance Optimization: Single-pass filtering & counting via useMemo
+  const { readyGames, soonGames, totalReadyCount, totalSoonCount } = useMemo(() => {
+    let tReady = 0;
+    let tSoon = 0;
+    
+    // Calculate global metrics regardless of UI filter values
+    GAMES.forEach(g => g.ready ? tReady++ : tSoon++);
+
+    const filtered = GAMES.filter(g => {
+      const matchCat = filter === 'All' || g.category === filter;
+      const matchSearch = !search || g.name.toLowerCase().includes(search.toLowerCase());
+      return matchCat && matchSearch;
+    });
+
+    return {
+      readyGames: filtered.filter(g => g.ready),
+      soonGames: filtered.filter(g => !g.ready),
+      totalReadyCount: tReady,
+      totalSoonCount: tSoon
+    };
+  }, [filter, search]);
+
+  // Handle direct custom card actions for launching specific multi/duo rooms
+  const handleCreateRoomForGame = (gameId) => {
+    setSelectedMpGame(gameId);
+    setMpView('create');
+  };
+
+  // ── Route Screen Guards ───────────────────────────────────────────────────
+  if (soloGame) return <GameWrapper gameId={soloGame} onBack={() => setSoloGame(null)} />;
+
+  if (mpView === 'create') return (
+    <div className="min-h-screen bg-gray-950 px-4 py-16 flex items-center justify-center">
+      <CreateRoom 
+        defaultGameId={selectedMpGame}
+        onRoomCreated={({ roomCode, room }) => { 
+          setMpRoom({ roomCode, room }); 
+          setMpView('room'); 
+          setSelectedMpGame(null);
+        }} 
+        onCancel={() => { 
+          setMpView(null); 
+          setSelectedMpGame(null);
+        }} 
+      />
+    </div>
+  );
+
+  if (mpView === 'join') return (
+    <div className="min-h-screen bg-gray-950 px-4 py-16 flex items-center justify-center">
+      <JoinRoom 
+        onRoomJoined={({ roomCode, room }) => { setMpRoom({ roomCode, room }); setMpView('room'); }} 
+        onCancel={() => setMpView(null)} 
+      />
+    </div>
+  );
+
+  if (mpView === 'room' && mpRoom) return (
+    <MultiplayerGame 
+      roomCode={mpRoom.roomCode} 
+      room={mpRoom.room} 
+      onLeave={() => { setMpView(null); setMpRoom(null); }} 
+    />
+  );
+
+  // ── Main Layout View ──────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen bg-gray-950 px-4 md:px-6 py-10">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-1">
+              Hey <span className="text-indigo-400">{user?.username}</span> 👋
+            </h1>
+            <p className="text-gray-400 text-sm">
+              {totalReadyCount} games ready · {totalSoonCount} coming soon
+            </p>
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            <button onClick={() => setMpView('join')} className="btn-secondary text-sm py-2 px-4 flex items-center gap-1.5">🔗 Join room</button>
+            <button onClick={() => setMpView('create')} className="btn-primary text-sm py-2 px-4 flex items-center gap-1.5">🚀 Create room</button>
+          </div>
+        </div>
+
+        {/* Inputs Control Panel */}
+        <div className="flex flex-wrap items-center gap-3 mb-8">
+          <input
+            type="text"
+            placeholder="🔍 Search games..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="input-field w-full sm:max-w-xs py-2 text-sm bg-gray-900 border border-gray-800 rounded-xl px-3 text-white focus:outline-none focus:border-indigo-500"
+          />
+          <div className="flex gap-2 flex-wrap">
+            {categories.map(cat => (
+              <button 
+                key={cat} 
+                onClick={() => setFilter(cat)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+                  filter === cat ? 'bg-indigo-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Active Playable Grid Layer */}
+        {readyGames.length > 0 && (
+          <>
+            <h2 className="text-xs text-gray-500 uppercase tracking-wider mb-4">
+              {filter === 'All' ? 'All games' : filter} · {readyGames.length} available
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-10">
+              {readyGames.map(game => (
+                <div key={game.id} className="card bg-gray-900 border border-gray-800 p-5 rounded-2xl group hover:border-gray-600 transition-all duration-200 flex flex-col">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-4xl group-hover:scale-110 transition-transform inline-block">{game.emoji}</span>
+                    <span className={`text-xs border rounded-full px-2.5 py-0.5 ${CATEGORY_COLORS[game.category] || 'text-white'}`}>
+                      {game.category}
+                    </span>
+                  </div>
+                  <h3 className="font-semibold text-white mb-1 text-lg">{game.name}</h3>
+                  <p className="text-sm text-gray-400 mb-4 flex-1 line-clamp-2">{game.desc}</p>
+                  
+                  <div className="flex gap-2 flex-wrap mt-auto">
+                    {game.modes.includes('single') && (
+                      <button onClick={() => setSoloGame(game.id)} className="flex-1 btn-primary text-sm py-2">🎮 Solo</button>
+                    )}
+                    {game.modes.includes('duo') && (
+                      <button onClick={() => handleCreateRoomForGame(game.id)} className="flex-1 btn-secondary text-sm py-2">👥 Duo</button>
+                    )}
+                    {game.modes.includes('multi') && (
+                      <button 
+                        onClick={() => handleCreateRoomForGame(game.id)} 
+                        className="flex-1 bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/20 text-pink-400 font-semibold py-2 px-3 rounded-xl transition-all text-sm"
+                      >
+                        🌐 Multi
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* In-Development Coming Soon Layer */}
+        {soonGames.length > 0 && (
+          <>
+            <h2 className="text-xs text-gray-500 uppercase tracking-wider mb-4">Coming soon</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-10">
+              {soonGames.map(game => (
+                <div key={game.id} className="bg-gray-900/40 border border-gray-900 rounded-2xl p-4 opacity-40 select-none">
+                  <span className="text-3xl filter grayscale">{game.emoji}</span>
+                  <p className="font-medium text-gray-300 mt-2 text-sm">{game.name}</p>
+                  <p className="text-xs text-gray-600 mt-1 line-clamp-1">{game.desc}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Absolute Empty Fallback State View */}
+        {readyGames.length === 0 && soonGames.length === 0 && (
+          <div className="text-center py-20 bg-gray-900/20 border border-gray-900 rounded-3xl">
+            <p className="text-4xl mb-3">🔍</p>
+            <p className="text-gray-400">No matches found for "{search}"</p>
+            <button 
+              onClick={() => { setSearch(''); setFilter('All'); }} 
+              className="px-4 py-2 mt-4 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-xl transition-colors"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+
+        <p className="text-center text-gray-700 text-xs mt-10">
+          Phase 4 — more multiplayer games coming soon!
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default GameLobby;
