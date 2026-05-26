@@ -5,7 +5,7 @@ import sounds from '../utils/sounds';
 const HOLES = 9;
 const GAME_TIME = 30;
 
-const WhackAMole = ({ onBack }) => {
+const Whackamole = ({ onBack }) => {
   const [status, setStatus]   = useState('idle');
   const [score, setScore]     = useState(0);
   const [misses, setMisses]   = useState(0);
@@ -139,4 +139,4 @@ const WhackAMole = ({ onBack }) => {
   );
 };
 
-export default WhackAMole;
+export default Whackamole;
