@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 // ── Sudoku generator ──────────────────────────────────────────────────────────
 const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);

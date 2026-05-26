@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import useSocket from '../hooks/useSocket';
+import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const QUESTION_TIME = 15;
 

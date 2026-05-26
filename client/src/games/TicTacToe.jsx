@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const WIN_LINES = [
   [0,1,2],[3,4,5],[6,7,8],

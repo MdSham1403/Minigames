@@ -1,5 +1,6 @@
 import { useState } from "react";
 import GameWrapper from "../components/GameWrapper";
+import sounds from '../utils/sounds';
 
 export default function NumberGuess({ onBack }) {
   const [target] = useState(() => Math.floor(Math.random() * 100));

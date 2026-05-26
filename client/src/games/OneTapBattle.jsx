@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 export default function OneTapBattle({ onBack }) {
   const [status, setStatus] = useState("wait");

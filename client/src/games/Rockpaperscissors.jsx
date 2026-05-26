@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const CHOICES = ['✊', '✋', '✌️'];
 const NAMES   = ['Rock', 'Paper', 'Scissors'];

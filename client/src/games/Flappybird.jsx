@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const W = 360, H = 500;
 const GRAVITY = 0.45, JUMP = -8, PIPE_W = 52, GAP = 150, PIPE_SPEED = 2.8;

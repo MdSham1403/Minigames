@@ -1,4 +1,5 @@
 import { useState } from "react";
+import sounds from '../utils/sounds';
 
 const WORDS = ["react", "socket", "gaming", "leaderboard"];
 

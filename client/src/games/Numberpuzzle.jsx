@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const SIZE = 4;
 const TOTAL = SIZE * SIZE;

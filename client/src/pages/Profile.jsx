@@ -19,6 +19,10 @@ const GAME_META = {
   simon:        { emoji: '🟢', label: 'Simon Says' },
   reaction:     { emoji: '⚡', label: 'Reaction Time' },
   numberpuzzle: { emoji: '🔷', label: '15 Puzzle' },
+  connect4:     { emoji: '🔴', label: 'Connect Four' },
+  chess:        { emoji: '♟', label: 'Chess' },
+  ludo:         { emoji: '🎲', label: 'Ludo' },
+  uno:          { emoji: '🃏', label: 'UNO' },
 };
 
 const ACHIEVEMENTS = [

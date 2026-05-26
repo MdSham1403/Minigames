@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const GAME_DURATION = 45;
 const TARGET_SIZE = 70;

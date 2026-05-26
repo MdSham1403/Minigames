@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const EMOJI_POOL = ['🐶','🐱','🦊','🐸','🦁','🐯','🐼','🐨','🦄','🐙','🦋','🌺','🍕','🚀','⚡','🎸'];
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const W = 400, H = 480;
 const PAD_W = 80, PAD_H = 12, BALL_R = 8;

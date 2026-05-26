@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import GameWrapper from "../components/GameWrapper";
+import sounds from '../utils/sounds';
 
 export default function ClickSpeed({ onBack }) {
   const [clicks, setClicks] = useState(0);

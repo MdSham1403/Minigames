@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import sounds from '../utils/sounds';
 
 export default function NeonDodger({ onBack }) {
   const [player, setPlayer] = useState(50);

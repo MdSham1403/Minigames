@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const GRID = 20;        // number of cells
 const CELL = 22;        // px per cell
