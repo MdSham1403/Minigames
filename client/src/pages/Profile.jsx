@@ -23,6 +23,10 @@ const GAME_META = {
   chess:        { emoji: '♟', label: 'Chess' },
   ludo:         { emoji: '🎲', label: 'Ludo' },
   uno:          { emoji: '🃏', label: 'UNO' },
+  minesweeper:  { emoji: '💣', label: 'Minesweeper' },
+  tetris:       { emoji: '🟦', label: 'Tetris' },
+  hangman:      { emoji: '🪢', label: 'Hangman' },
+  battleship:   { emoji: '🚢', label: 'Battleship' },
 };
 
 const ACHIEVEMENTS = [

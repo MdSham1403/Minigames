@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import useSocket from '../hooks/useSocket';
-import api from '../api/axios';
 import sounds from '../utils/sounds';
 
 const QUESTION_TIME = 15;
@@ -70,7 +69,7 @@ const TriviaDuo = ({ room, roomCode, isHost, onGameEnd }) => {
       // Host advances question after everyone answered or time up
       if (event === 'reveal_answer') {
         clearInterval(timerRef.current);
-        setCorrectIdx(data.correctIdx);
+        sounds.beep(); setCorrectIdx(data.correctIdx);
         setTimeLeft(0);
         // Update scores
         setScores(prev => {
@@ -88,7 +87,7 @@ const TriviaDuo = ({ room, roomCode, isHost, onGameEnd }) => {
           setCorrectIdx(null);
           answeredRef.current = false;
           if (data.nextIndex >= totalQ) {
-            setStatus('done');
+            sounds.win(); setStatus('done');
             onGameEnd(scores);
           } else {
             setQIndex(data.nextIndex);

@@ -49,7 +49,7 @@ const WhackAMole = ({ onBack }) => {
     clearAllTimers();
     frameRef.current = false;
     const final = scoreRef.current;
-    setStatus('done');
+    sounds.gameOver(); setStatus('done');
     setBest(b => Math.max(b, final));
     setSaving(true);
     try { await api.post('/scores', { gameName: 'whackamole', score: final, mode: 'single' }); } catch {}
@@ -83,7 +83,7 @@ const WhackAMole = ({ onBack }) => {
     setMoles(prev => { const n=[...prev]; n[i]=false; return n; });
     setWhacked(prev => { const n=[...prev]; n[i]=true; return n; });
     setTimeout(() => setWhacked(prev => { const n=[...prev]; n[i]=false; return n; }), 200);
-    scoreRef.current += 10;
+    sounds.whack(); scoreRef.current += 10;
     setScore(scoreRef.current);
   }, [moles, status]);
 

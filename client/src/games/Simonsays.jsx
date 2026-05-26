@@ -24,7 +24,7 @@ const SimonSays = ({ onBack }) => {
     let i = 0;
     const show = () => {
       if (i >= seq.length) { setActive(null); setStatus('input'); return; }
-      setActive(seq[i]);
+      setActive(seq[i]); sounds.pad(seq[i]);
       i++;
       setTimeout(() => { setActive(null); setTimeout(show, spd * 0.4); }, spd * 0.6);
     };
@@ -50,7 +50,7 @@ const SimonSays = ({ onBack }) => {
     const pos = newPlayerSeq.length - 1;
     if (newPlayerSeq[pos] !== sequence[pos]) {
       // Wrong!
-      setStatus('fail');
+      sounds.gameOver(); setStatus('fail');
       setBest(b => Math.max(b, round - 1));
       setSaving(true);
       api.post('/scores', { gameName: 'simon', score: (round-1)*50, mode: 'single' })

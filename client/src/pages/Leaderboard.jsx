@@ -19,6 +19,10 @@ const GAMES = [
   { id:'simon',       label:'🟢 Simon Says',        desc:'Longest pattern memorised' },
   { id:'reaction',    label:'⚡ Reaction Time',     desc:'Fastest average reaction (inverted)' },
   { id:'numberpuzzle',label:'🔷 15 Puzzle',         desc:'Fewest moves, fastest time' },
+  { id:'minesweeper', label:'💣 Minesweeper',    desc:'Fastest clear with fewest mistakes' },
+  { id:'tetris',       label:'🟦 Tetris',         desc:'Highest score before game over' },
+  { id:'hangman',      label:'🪢 Hangman',        desc:'Score with streak and speed bonuses' },
+  { id:'battleship',   label:'🚢 Battleship',     desc:'Fleet sinking score' },
 ];
 
 const MEDALS = ['🥇','🥈','🥉'];

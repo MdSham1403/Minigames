@@ -19,11 +19,13 @@ const RockPaperScissors = ({ onBack }) => {
 
   const handleChoice = useCallback(async (idx) => {
     if (status !== 'playing') return;
+    sounds.click();
     const ai = Math.floor(Math.random() * 3);
     setPlayerChoice(idx);
     setAiChoice(ai);
 
     let res;
+    sounds.card();
     if (idx === ai)          res = 'draw';
     else if (WIN_MAP[idx] === ai) res = 'win';
     else                     res = 'lose';
@@ -33,11 +35,11 @@ const RockPaperScissors = ({ onBack }) => {
     setRound(newRound);
     const newPS = res === 'win'  ? playerScore + 1 : playerScore;
     const newAS = res === 'lose' ? aiScore + 1     : aiScore;
-    if (res === 'win')  setPlayerScore(newPS);
+    if (res === 'win') sounds.correct(); if (res === 'lose') sounds.wrong(); if (res === 'win')  setPlayerScore(newPS);
     if (res === 'lose') setAiScore(newAS);
 
     if (newRound >= MAX_ROUNDS) {
-      setStatus('done');
+      sounds.win(); setStatus('done');
       const finalScore = newPS * 100 + (res === 'win' ? 50 : 0);
       setSaving(true);
       try { await api.post('/scores', { gameName: 'rps', score: finalScore, mode: 'single' }); } catch {}

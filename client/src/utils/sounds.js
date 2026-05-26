@@ -136,7 +136,49 @@ class SoundEngine {
       this.tone({ freq, duration: 0.08, volume: 0.2, delay: i * 0.07 });
     });
   }
+  // Whack hit
+  whack() {
+    this.noise({ duration: 0.08, volume: 0.25 });
+    this.tone({ freq: 180, type: 'square', duration: 0.06, volume: 0.15, delay: 0.03 });
+  }
+
+  // Simon pad light
+  pad(idx) {
+    const freqs = [392, 494, 330, 262];
+    this.tone({ freq: freqs[idx] || 392, type: 'sine', duration: 0.35, volume: 0.3 });
+  }
+
+  // Piece slide (puzzle, connect4, chess)
+  slide() {
+    this.tone({ freq: 600, type: 'triangle', duration: 0.05, volume: 0.1 });
+    this.tone({ freq: 900, type: 'triangle', duration: 0.05, volume: 0.1, delay: 0.05 });
+  }
+
+  // Card play (UNO)
+  card() {
+    this.tone({ freq: 700, type: 'sine', duration: 0.06, volume: 0.15 });
+    this.tone({ freq: 500, type: 'sine', duration: 0.08, volume: 0.12, delay: 0.05 });
+  }
+
+  // Piece place (chess, connect4, ludo)
+  place() {
+    this.tone({ freq: 300, type: 'triangle', duration: 0.1, volume: 0.2 });
+  }
+
+  // Ludo dice roll
+  dice() {
+    for (let i = 0; i < 5; i++) {
+      this.tone({ freq: 200 + Math.random() * 400, type: 'square', duration: 0.04, volume: 0.08, delay: i * 0.06 });
+    }
+  }
+
+  // Timeout / time low warning
+  tick() {
+    this.tone({ freq: 1000, type: 'sine', duration: 0.05, volume: 0.12 });
+  }
+
 }
 
 const sounds = new SoundEngine();
 export default sounds;
+// The file already exports sounds — this is a NO-OP safety guard

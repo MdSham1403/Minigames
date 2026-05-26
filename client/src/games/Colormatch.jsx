@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api/axios';
+import sounds from '../utils/sounds';
 
 const COLORS = [
   { name: 'RED',    hex: '#ef4444' },
@@ -42,7 +43,7 @@ const ColorMatch = ({ onBack }) => {
     if (num >= TOTAL) {
       setStatus('done');
       setSaving(true);
-      api.post('/scores', { gameName: 'colormatch', score: currentScore, mode: 'single' })
+      sounds.win(); api.post('/scores', { gameName: 'colormatch', score: currentScore, mode: 'single' })
         .catch(() => {}).finally(() => setSaving(false));
       return;
     }
@@ -58,7 +59,7 @@ const ColorMatch = ({ onBack }) => {
           clearInterval(timerRef.current);
           if (!answeredRef.current) {
             answeredRef.current = true;
-            setFeedback('timeout');
+            setFeedback('timeout'); sounds.wrong();
             setStreak(0);
             setTimeout(() => nextRound(num + 1, currentScore, 0), 800);
           }
@@ -79,14 +80,14 @@ const ColorMatch = ({ onBack }) => {
       const bonus = timeLeft * 20 + (newStreak > 1 ? newStreak * 15 : 0);
       const gained = 50 + bonus;
       setStreak(newStreak);
-      setFeedback('correct');
+      setFeedback('correct'); sounds.correct();
       setScore(s => {
         const ns = s + gained;
         setTimeout(() => nextRound(qNum, ns, newStreak), 600);
         return ns;
       });
     } else {
-      setFeedback('wrong');
+      setFeedback('wrong'); sounds.wrong();
       setStreak(0);
       setTimeout(() => nextRound(qNum, score, 0), 900);
     }

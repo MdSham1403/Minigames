@@ -92,13 +92,13 @@ const MemoryDuo = ({ room, roomCode, isHost, onGameEnd }) => {
         setFlipped([]);
         lockedRef.current = false;
         setLocked(false);
-        setOppScore(s => s + 100);
+        sounds.match(); setOppScore(s => s + 100);
         setOppMatched(m => m + 1);
         // opponent keeps their turn after a match
       }
 
       if (event === 'game_done') {
-        setStatus('done');
+        sounds.win(); setStatus('done');
         onGameEnd(data.myScore, data.oppScore);
       }
     });
@@ -134,7 +134,7 @@ const MemoryDuo = ({ room, roomCode, isHost, onGameEnd }) => {
           if (totalMatched === PAIRS * 2) {
             // Game over
             emit('game_event', { roomCode, event: 'game_done', data: { myScore: newScore, oppScore } });
-            setStatus('done');
+            sounds.win(); setStatus('done');
             onGameEnd(newScore, oppScore);
           }
         }
@@ -177,7 +177,7 @@ const MemoryDuo = ({ room, roomCode, isHost, onGameEnd }) => {
     setFlipped(newFlipped);
 
     // Tell opponent
-    emit('game_event', { roomCode, event: 'flip_card', data: { idx } });
+    sounds.flip(); emit('game_event', { roomCode, event: 'flip_card', data: { idx } });
 
     if (newFlipped.length === 2) {
       lockedRef.current = true;

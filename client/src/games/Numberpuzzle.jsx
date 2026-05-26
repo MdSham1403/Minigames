@@ -50,6 +50,7 @@ const NumberPuzzle = ({ onBack }) => {
     const br  = Math.floor(blank/SIZE), bc  = blank%SIZE;
     const adjacent = (Math.abs(row-br) + Math.abs(col-bc)) === 1;
     if (!adjacent) return;
+    sounds.slide();
 
     const newTiles = [...tiles];
     [newTiles[idx], newTiles[blank]] = [newTiles[blank], newTiles[idx]];
@@ -57,7 +58,7 @@ const NumberPuzzle = ({ onBack }) => {
     setMoves(m => m+1);
 
     if (isSolved(newTiles)) {
-      setStatus('done');
+      sounds.win(); setStatus('done');
       const score = Math.max(0, 2000 - moves * 5 - time * 2);
       setSaving(true);
       api.post('/scores', { gameName: 'numberpuzzle', score, mode: 'single' })

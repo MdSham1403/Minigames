@@ -6,35 +6,39 @@ import JoinRoom from '../components/JoinRoom';
 import MultiplayerGame from '../components/MultiplayerGame';
 
 const GAMES = [
-  // ── Arcade ────────────────────────────────────────────────────────────────
+  // Arcade
   { id:'snake',       emoji:'🐍', name:'Snake',          cat:'Arcade', modes:['single'],              ready:true,  desc:"Eat, grow, don't crash!" },
   { id:'flappy',      emoji:'🐦', name:'Flappy Bird',    cat:'Arcade', modes:['single'],              ready:true,  desc:'Tap to fly past the pipes.' },
   { id:'breakout',    emoji:'🧱', name:'Breakout',       cat:'Arcade', modes:['single'],              ready:true,  desc:'Smash all bricks with the ball.' },
   { id:'whackamole',  emoji:'🐹', name:'Whack-a-Mole',  cat:'Arcade', modes:['single'],              ready:true,  desc:'Whack moles as fast as you can!' },
   { id:'reaction',    emoji:'⚡', name:'Reaction Time',  cat:'Arcade', modes:['single'],              ready:true,  desc:'How fast are your reflexes?' },
-  // ── Puzzle ─────────────────────────────────────────────────────────────────
-  { id:'memory',      emoji:'🧠', name:'Memory',         cat:'Puzzle', modes:['single','duo'],        ready:true,  desc:'Find all matching pairs.' },
+  { id:'tetris',      emoji:'🟦', name:'Tetris',         cat:'Arcade', modes:['single'],              ready:true,  desc:'Classic falling blocks — clear lines!' },
+  // Puzzle
+  { id:'memory',      emoji:'🧠', name:'Memory',         cat:'Puzzle', modes:['single','duo'],        ready:true,  desc:'Find all matching pairs in time.' },
   { id:'2048',        emoji:'🎯', name:'2048',           cat:'Puzzle', modes:['single'],              ready:true,  desc:'Slide tiles — reach 2048!' },
   { id:'sudoku',      emoji:'🔢', name:'Sudoku',         cat:'Puzzle', modes:['single'],              ready:true,  desc:'Fill the grid. No repeats!' },
   { id:'numberpuzzle',emoji:'🔷', name:'15 Puzzle',      cat:'Puzzle', modes:['single'],              ready:true,  desc:'Slide tiles into order 1–15.' },
-  { id:'simon',       emoji:'🟢', name:'Simon Says',     cat:'Puzzle', modes:['single'],              ready:true,  desc:'Repeat the growing pattern.' },
-  // ── Brain ──────────────────────────────────────────────────────────────────
+  { id:'simon',       emoji:'🟢', name:'Simon Says',     cat:'Puzzle', modes:['single'],              ready:true,  desc:'Repeat the growing colour pattern.' },
+  { id:'minesweeper', emoji:'💣', name:'Minesweeper',    cat:'Puzzle', modes:['single'],              ready:true,  desc:'Clear the field without hitting mines.' },
+  // Brain
   { id:'wordscramble',emoji:'🔤', name:'Word Scramble',  cat:'Brain',  modes:['single'],              ready:true,  desc:'Unscramble words against the clock!' },
   { id:'mathblaster', emoji:'🧮', name:'Math Blaster',   cat:'Brain',  modes:['single'],              ready:true,  desc:'Rapid-fire mental maths.' },
   { id:'colormatch',  emoji:'🌈', name:'Colour Match',   cat:'Brain',  modes:['single'],              ready:true,  desc:'Tap the ink colour, not the word!' },
-  // ── Card & Board ───────────────────────────────────────────────────────────
+  { id:'hangman',     emoji:'🪢', name:'Hangman',        cat:'Brain',  modes:['single'],              ready:true,  desc:'Guess the word before the man falls.' },
+  // Card & Board
   { id:'trivia',      emoji:'❓', name:'Trivia',         cat:'Card',   modes:['single','duo','multi'],ready:true,  desc:'10 questions, 15 seconds each.' },
   { id:'tictactoe',   emoji:'❌', name:'Tic Tac Toe',   cat:'Card',   modes:['single'],              ready:true,  desc:'Classic — vs AI or 2 players.' },
   { id:'rps',         emoji:'✊', name:'Rock Paper Scissors', cat:'Card', modes:['single'],          ready:true,  desc:'Best of 5 against the AI.' },
   { id:'connect4',    emoji:'🔴', name:'Connect Four',   cat:'Card',   modes:['single'],              ready:true,  desc:'Four in a row wins.' },
-  { id:'chess',       emoji:'♟', name:'Chess',           cat:'Card',   modes:['single'],              ready:true,  desc:'Classic chess — vs AI.' },
+  { id:'chess',       emoji:'♟', name:'Chess',           cat:'Card',   modes:['single'],              ready:true,  desc:'Classic chess vs AI.' },
   { id:'ludo',        emoji:'🎲', name:'Ludo',           cat:'Card',   modes:['single'],              ready:true,  desc:'Race all 4 pieces home first.' },
   { id:'uno',         emoji:'🃏', name:'UNO',            cat:'Card',   modes:['single'],              ready:true,  desc:'Match colors, play specials, win!' },
-  // ── Coming soon ────────────────────────────────────────────────────────────
-  { id:'battleship',  emoji:'🚢', name:'Battleship',     cat:'Card',   modes:['duo'],                 ready:false, desc:'Sink your opponent\'s fleet.' },
-  { id:'minesweeper', emoji:'💣', name:'Minesweeper',    cat:'Puzzle', modes:['single'],              ready:false, desc:'Clear the field without hitting mines.' },
-  { id:'tetris',      emoji:'🟦', name:'Tetris',         cat:'Arcade', modes:['single'],              ready:false, desc:'Classic falling blocks — clear lines.' },
-  { id:'hangman',     emoji:'🪢', name:'Hangman',        cat:'Brain',  modes:['single'],              ready:false, desc:'Guess the word before time runs out.' },
+  { id:'battleship',  emoji:'🚢', name:'Battleship',     cat:'Card',   modes:['single'],              ready:true,  desc:'Place ships, sink the enemy fleet!' },
+  // Coming soon — 4 new
+  { id:'wordle',      emoji:'🟩', name:'Wordle',         cat:'Brain',  modes:['single'],              ready:false, desc:'Guess the 5-letter word in 6 tries.' },
+  { id:'pong',        emoji:'🏓', name:'Pong',           cat:'Arcade', modes:['single','duo'],        ready:false, desc:'Classic arcade table tennis.' },
+  { id:'checkers',    emoji:'⚫', name:'Checkers',       cat:'Card',   modes:['single'],              ready:false, desc:'Capture all of the opponent\'s pieces.' },
+  { id:'2048x',       emoji:'🎮', name:'2048 Hex',       cat:'Puzzle', modes:['single'],              ready:false, desc:'2048 on a hexagonal grid.' },
 ];
 
 const CATEGORY_COLORS = {

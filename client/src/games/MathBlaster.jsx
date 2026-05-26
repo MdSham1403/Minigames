@@ -45,7 +45,7 @@ const MathBlaster = ({ onBack }) => {
     if (num >= TOTAL) {
       setStatus('done');
       setSaving(true);
-      api.post('/scores', { gameName: 'mathblaster', score: currentScore, mode: 'single' })
+      sounds.win(); api.post('/scores', { gameName: 'mathblaster', score: currentScore, mode: 'single' })
         .catch(() => {}).finally(() => setSaving(false));
       return;
     }
@@ -66,7 +66,7 @@ const MathBlaster = ({ onBack }) => {
           clearInterval(timerRef.current);
           if (!answeredRef.current) {
             answeredRef.current = true;
-            setFeedback('timeout');
+            sounds.wrong(); setFeedback('timeout');
             setStreak(0);
             setTimeout(() => nextQ(num + 1, currentScore, 0, newLevel), 1000);
           }
@@ -88,14 +88,14 @@ const MathBlaster = ({ onBack }) => {
       const bonus = timeLeft * 5 + (newStreak > 1 ? newStreak * 10 : 0);
       const gained = 100 + bonus;
       setStreak(newStreak);
-      setFeedback('correct');
+      sounds.correct(); setFeedback('correct');
       setScore(s => {
         const ns = s + gained;
         setTimeout(() => nextQ(qNum, ns, newStreak, level), 900);
         return ns;
       });
     } else {
-      setFeedback('wrong');
+      sounds.wrong(); setFeedback('wrong');
       setStreak(0);
       setTimeout(() => nextQ(qNum, score, 0, level), 1200);
     }

@@ -22,7 +22,7 @@ const ReactionTime = ({ onBack }) => {
     const delay = 1500 + Math.random() * 3000;
     timerRef.current = setTimeout(() => {
       startRef.current = Date.now();
-      setStatus('ready');
+      sounds.go(); setStatus('ready');
     }, delay);
   }, []);
 
@@ -31,7 +31,7 @@ const ReactionTime = ({ onBack }) => {
 
     if (status === 'waiting') {
       clearTimeout(timerRef.current);
-      setStatus('too-early');
+      sounds.wrong(); setStatus('too-early');
       return;
     }
 
@@ -41,7 +41,7 @@ const ReactionTime = ({ onBack }) => {
     }
 
     if (status === 'ready') {
-      const rt = Date.now() - startRef.current;
+      sounds.correct(); const rt = Date.now() - startRef.current;
       setCurrent(rt);
       const newTimes = [...times, rt];
       const newRound = round + 1;
@@ -52,7 +52,7 @@ const ReactionTime = ({ onBack }) => {
       if (newRound >= ROUNDS) {
         const avg = Math.round(newTimes.reduce((a,b)=>a+b,0)/newTimes.length);
         const score = Math.max(0, 1000 - avg);
-        setStatus('done');
+        sounds.win(); setStatus('done');
         setSaving(true);
         try { await api.post('/scores', { gameName: 'reaction', score, mode: 'single' }); } catch {}
         setSaving(false);
