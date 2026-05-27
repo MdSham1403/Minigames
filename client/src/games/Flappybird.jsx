@@ -25,6 +25,7 @@ const FlappyBird = ({ onBack }) => {
   const jump = useCallback(() => {
     if (state.current && state.current.alive) {
       state.current.bird.vy = JUMP;
+      sounds.click();
     }
   }, []);
 
@@ -32,6 +33,7 @@ const FlappyBird = ({ onBack }) => {
     cancelAnimationFrame(rafRef.current);
     setStatus('dead');
     setBest(b => Math.max(b, finalScore));
+    sounds.gameOver();
     setSaving(true);
     try { await api.post('/scores', { gameName: 'flappy', score: finalScore, mode: 'single' }); } catch {}
     setSaving(false);
@@ -64,6 +66,7 @@ const FlappyBird = ({ onBack }) => {
         p.scored = true;
         s.score++;
         setScore(s.score);
+        sounds.eat();
       }
     });
 

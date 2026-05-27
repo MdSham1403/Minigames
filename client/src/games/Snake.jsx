@@ -134,6 +134,7 @@ const Snake = ({ onBack }) => {
       s.food = randomCell(s.snake);
       setScore(s.score);
       setHighScore(prev => Math.max(prev, s.score));
+      sounds.eat();
     } else {
       s.snake.pop();
     }
@@ -144,6 +145,7 @@ const Snake = ({ onBack }) => {
   const endGame = useCallback(async () => {
     clearInterval(tickRef.current);
     setStatus('dead');
+    sounds.gameOver();
     const finalScore = stateRef.current?.score || 0;
 
     // Save score to backend

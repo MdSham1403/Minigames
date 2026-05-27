@@ -46,6 +46,7 @@ const Breakout = ({ onBack }) => {
     cancelAnimationFrame(rafRef.current);
     setStatus(won ? 'won' : 'dead');
     setBest(b => Math.max(b, finalScore));
+    if (won) sounds.win(); else sounds.gameOver();
     setSaving(true);
     try { await api.post('/scores', { gameName: 'breakout', score: finalScore, mode: 'single' }); } catch {}
     setSaving(false);
@@ -90,6 +91,7 @@ const Breakout = ({ onBack }) => {
         s.ball.vy *= -1;
         s.score += b.points;
         setScore(s.score);
+        sounds.eat();
         break;
       }
     }

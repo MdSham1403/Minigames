@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api/axios';
-
+import sounds from '../utils/sounds';
 
 const PADS = [
   { color: '#22c55e', lit: '#86efac', label: '🟢' },
@@ -9,7 +9,7 @@ const PADS = [
   { color: '#3b82f6', lit: '#93c5fd', label: '🔵' },
 ];
 
-const Simonsays = ({ onBack }) => {
+const SimonSays = ({ onBack }) => {
   const [sequence, setSequence]   = useState([]);
   const [playerSeq, setPlayerSeq] = useState([]);
   const [active, setActive]       = useState(null);
@@ -118,4 +118,4 @@ const Simonsays = ({ onBack }) => {
   );
 };
 
-export default Simonsays;
+export default SimonSays;

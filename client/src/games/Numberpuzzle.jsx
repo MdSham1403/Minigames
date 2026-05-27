@@ -25,7 +25,7 @@ const generate = () => {
 
 const isSolved = (tiles) => tiles.every((t,i) => t === (i+1) % TOTAL);
 
-const Numberpuzzle = ({ onBack }) => {
+const NumberPuzzle = ({ onBack }) => {
   const [tiles, setTiles]   = useState(Array.from({length:TOTAL},(_,i)=>(i+1)%TOTAL));
   const [moves, setMoves]   = useState(0);
   const [status, setStatus] = useState('idle');
@@ -123,4 +123,4 @@ const Numberpuzzle = ({ onBack }) => {
   );
 };
 
-export default Numberpuzzle;
+export default NumberPuzzle;

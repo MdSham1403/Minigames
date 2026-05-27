@@ -77,6 +77,7 @@ const TicTacToe = ({ onBack }) => {
     const newBoard = [...board];
     newBoard[idx] = xIsNext ? 'X' : 'O';
     const res = checkWinner(newBoard);
+    sounds.click();
 
     setBoard(newBoard);
     setXIsNext(!xIsNext);
@@ -86,6 +87,9 @@ const TicTacToe = ({ onBack }) => {
       setStatus('done');
       setScore(s => ({ ...s, [res.winner]: (s[res.winner] || 0) + 1 }));
       saveScore(res.winner === 'X' ? 100 : res.winner === 'draw' ? 50 : 0);
+      if (res.winner === 'X') sounds.win();
+      else if (res.winner === 'draw') sounds.beep();
+      else sounds.gameOver();
       return;
     }
 
@@ -104,6 +108,7 @@ const TicTacToe = ({ onBack }) => {
           setStatus('done');
           setScore(s => ({ ...s, [aiRes.winner]: (s[aiRes.winner] || 0) + 1 }));
           saveScore(aiRes.winner === 'X' ? 100 : aiRes.winner === 'draw' ? 50 : 0);
+          if (aiRes.winner === 'X') sounds.win(); else sounds.gameOver();
         }
       }, 400);
     }

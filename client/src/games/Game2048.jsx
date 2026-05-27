@@ -122,10 +122,12 @@ const Game2048 = ({ onBack }) => {
         setBest(b => Math.max(b, newScore));
         return newScore;
       });
+      if (gained > 0) sounds.merge();
 
       // Check win
       if (next.some(row => row.some(v => v === 2048))) {
         setStatus('won');
+        sounds.win();
         setScore(s => { saveScore(s + gained); return s + gained; });
         return next;
       }
@@ -135,6 +137,7 @@ const Game2048 = ({ onBack }) => {
       // Check game over
       if (!hasMovesLeft(withNew)) {
         setStatus('dead');
+        sounds.gameOver();
         setScore(s => { saveScore(s + gained); return s + gained; });
       }
 

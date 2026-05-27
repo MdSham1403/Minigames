@@ -6,7 +6,7 @@ const CHOICES = ['✊', '✋', '✌️'];
 const NAMES   = ['Rock', 'Paper', 'Scissors'];
 const WIN_MAP = { 0: 2, 1: 0, 2: 1 }; // index that beats each
 
-const Rockpaperscissors = ({ onBack }) => {
+const RockPaperScissors = ({ onBack }) => {
   const [playerScore, setPlayerScore] = useState(0);
   const [aiScore, setAiScore]         = useState(0);
   const [round, setRound]             = useState(0);
@@ -130,4 +130,4 @@ const Rockpaperscissors = ({ onBack }) => {
   );
 };
 
-export default Rockpaperscissors;
+export default RockPaperScissors;

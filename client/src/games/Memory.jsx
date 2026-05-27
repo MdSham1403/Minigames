@@ -65,6 +65,7 @@ const Memory = ({ onBack }) => {
     setStatus('won');
     setScore(finalScore);
     setBestScore(prev => Math.max(prev, finalScore));
+    if (finalScore > 0) sounds.win(); else sounds.gameOver();
     setSaving(true);
     try {
       await api.post('/scores', { gameName: 'memory', score: finalScore, mode: 'single' });
@@ -81,6 +82,7 @@ const Memory = ({ onBack }) => {
     const newFlipped = [...flipped, idx];
     setCards(prev => prev.map((c, i) => i === idx ? { ...c, flipped: true } : c));
     setFlipped(newFlipped);
+    sounds.flip();
 
     if (newFlipped.length === 2) {
       setMoves(m => m + 1);
@@ -97,6 +99,7 @@ const Memory = ({ onBack }) => {
           setMatched(newMatched);
           setFlipped([]);
           setLocked(false);
+          sounds.match();
 
           if (newMatched === pairs) {
             // All matched — calculate score
@@ -114,6 +117,7 @@ const Memory = ({ onBack }) => {
           ));
           setFlipped([]);
           setLocked(false);
+          sounds.wrong();
         }, 900);
       }
     }

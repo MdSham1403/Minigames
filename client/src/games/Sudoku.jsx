@@ -112,12 +112,15 @@ const Sudoku = ({ onBack }) => {
     if (num !== solution[r][c]) {
       setErrors(prev => new Set(prev).add(`${r}-${c}`));
       setMistakes(m => m + 1);
+      sounds.wrong();
     } else {
       setErrors(prev => { const n = new Set(prev); n.delete(`${r}-${c}`); return n; });
+      sounds.correct();
       // Check win
       const solved = newBoard.every((row, ri) => row.every((v, ci) => v === solution[ri][ci]));
       if (solved) {
         setStatus('done');
+        sounds.win();
         const pts = Math.max(0, 1000 - mistakes * 50 - Math.floor(time / 10) * 5);
         setSaving(true);
         api.post('/scores', { gameName: 'sudoku', score: pts, mode: 'single' })

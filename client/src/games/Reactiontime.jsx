@@ -4,7 +4,7 @@ import sounds from '../utils/sounds';
 
 const ROUNDS = 5;
 
-const Reactiontime = ({ onBack }) => {
+const ReactionTime = ({ onBack }) => {
   const [status, setStatus]   = useState('idle');   // idle | waiting | ready | too-early | done
   const [times, setTimes]     = useState([]);
   const [round, setRound]     = useState(0);
@@ -136,4 +136,4 @@ const Reactiontime = ({ onBack }) => {
   );
 };
 
-export default Reactiontime;
+export default ReactionTime;

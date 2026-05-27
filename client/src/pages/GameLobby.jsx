@@ -1,10 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import GameWrapper from '../components/GameWrapper';
 import CreateRoom from '../components/CreateRoom';
 import JoinRoom from '../components/JoinRoom';
 import MultiplayerGame from '../components/MultiplayerGame';
 
+// ─── MASTER GAME LIST ────────────────────────────────────────────────────────
+// To add a new game: add one entry here. ready:true = playable, false = coming soon.
 const GAMES = [
   // Arcade
   { id:'snake',       emoji:'🐍', name:'Snake',          cat:'Arcade', modes:['single'],              ready:true,  desc:"Eat, grow, don't crash!" },
@@ -41,174 +43,92 @@ const GAMES = [
   { id:'2048x',       emoji:'🎮', name:'2048 Hex',       cat:'Puzzle', modes:['single'],              ready:false, desc:'2048 on a hexagonal grid.' },
 ];
 
-const CATEGORY_COLORS = {
-  Arcade: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
-  Puzzle: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  Brain:  'bg-teal-500/10   text-teal-400   border-teal-500/20',
-  Card:   'bg-pink-500/10   text-pink-400   border-pink-500/20',
+const CAT_COLORS = {
+  Arcade:'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  Puzzle:'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  Brain: 'bg-teal-500/10   text-teal-400   border-teal-500/20',
+  Card:  'bg-pink-500/10   text-pink-400   border-pink-500/20',
 };
 
 const GameLobby = () => {
   const { user } = useAuth();
+  const [soloGame, setSoloGame] = useState(null);
+  const [mpView,   setMpView]   = useState(null);
+  const [mpRoom,   setMpRoom]   = useState(null);
+  const [filter,   setFilter]   = useState('All');
+  const [search,   setSearch]   = useState('');
 
-  // Navigation and Session States
-  const [soloGame, setSoloGame] = useState(null); 
-  const [mpView, setMpView]     = useState(null); // null | 'create' | 'join' | 'room'
-  const [mpRoom, setMpRoom]     = useState(null); // { roomCode, room }
-  
-  // Context state for creating a room directly from a game card
-  const [selectedMpGame, setSelectedMpGame] = useState(null); 
+  const cats = ['All','Arcade','Puzzle','Brain','Card'];
+  const filtered = GAMES.filter(g =>
+    (filter === 'All' || g.cat === filter) &&
+    (!search || g.name.toLowerCase().includes(search.toLowerCase()))
+  );
+  const ready = filtered.filter(g => g.ready);
+  const soon  = filtered.filter(g => !g.ready);
 
-  // Filter States
-  const [filter, setFilter]     = useState('All');
-  const [search, setSearch]     = useState('');
-  
-  const categories = ['All', 'Arcade', 'Puzzle', 'Brain', 'Card'];
-
-  // 🧠 Performance Optimization: Single-pass filtering & counting via useMemo
-  // 🧠 Performance Optimization: Single-pass filtering & counting via useMemo
-  const { readyGames, soonGames, totalReadyCount, totalSoonCount } = useMemo(() => {
-    let tReady = 0;
-    let tSoon = 0;
-    
-    // Calculate global metrics regardless of UI filter values
-    GAMES.forEach(g => g.ready ? tReady++ : tSoon++);
-
-    const filtered = GAMES.filter(g => {
-      // ✅ CHANGED g.category TO g.cat TO MATCH YOUR DATA ARRAY ARRAY
-      const matchCat = filter === 'All' || g.cat === filter;
-      const matchSearch = !search || g.name.toLowerCase().includes(search.toLowerCase());
-      return matchCat && matchSearch;
-    });
-
-    return {
-      readyGames: filtered.filter(g => g.ready),
-      soonGames: filtered.filter(g => !g.ready),
-      totalReadyCount: tReady,
-      totalSoonCount: tSoon
-    };
-  }, [filter, search]);
-
-  // Handle direct custom card actions for launching specific multi/duo rooms
-  const handleCreateRoomForGame = (gameId) => {
-    setSelectedMpGame(gameId);
-    setMpView('create');
-  };
-
-  // ── Route Screen Guards ───────────────────────────────────────────────────
   if (soloGame) return <GameWrapper gameId={soloGame} onBack={() => setSoloGame(null)} />;
-
   if (mpView === 'create') return (
     <div className="min-h-screen bg-gray-950 px-4 py-16 flex items-center justify-center">
-      <CreateRoom 
-        defaultGameId={selectedMpGame}
-        onRoomCreated={({ roomCode, room }) => { 
-          setMpRoom({ roomCode, room }); 
-          setMpView('room'); 
-          setSelectedMpGame(null);
-        }} 
-        onCancel={() => { 
-          setMpView(null); 
-          setSelectedMpGame(null);
-        }} 
-      />
+      <CreateRoom onRoomCreated={({ roomCode, room }) => { setMpRoom({ roomCode, room }); setMpView('room'); }} onCancel={() => setMpView(null)} />
     </div>
   );
-
   if (mpView === 'join') return (
     <div className="min-h-screen bg-gray-950 px-4 py-16 flex items-center justify-center">
-      <JoinRoom 
-        onRoomJoined={({ roomCode, room }) => { setMpRoom({ roomCode, room }); setMpView('room'); }} 
-        onCancel={() => setMpView(null)} 
-      />
+      <JoinRoom onRoomJoined={({ roomCode, room }) => { setMpRoom({ roomCode, room }); setMpView('room'); }} onCancel={() => setMpView(null)} />
     </div>
   );
-
   if (mpView === 'room' && mpRoom) return (
-    <MultiplayerGame 
-      roomCode={mpRoom.roomCode} 
-      room={mpRoom.room} 
-      onLeave={() => { setMpView(null); setMpRoom(null); }} 
-    />
+    <MultiplayerGame roomCode={mpRoom.roomCode} room={mpRoom.room} onLeave={() => { setMpView(null); setMpRoom(null); }} />
   );
 
-  // ── Main Layout View ──────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-gray-950 px-4 md:px-6 py-10">
       <div className="max-w-7xl mx-auto">
-        
-        {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-1">
-              Hey <span className="text-indigo-400">{user?.username}</span> 👋
-            </h1>
-            <p className="text-gray-400 text-sm">
-              {totalReadyCount} games ready · {totalSoonCount} coming soon
-            </p>
+            <h1 className="text-3xl font-bold text-white mb-1">Hey <span className="text-indigo-400">{user?.username}</span> 👋</h1>
+            <p className="text-gray-400 text-sm">{GAMES.filter(g => g.ready).length} games · {GAMES.filter(g => !g.ready).length} coming soon</p>
           </div>
           <div className="flex gap-2 flex-shrink-0">
-            <button onClick={() => setMpView('join')} className="btn-secondary text-sm py-2 px-4 flex items-center gap-1.5">🔗 Join room</button>
-            <button onClick={() => setMpView('create')} className="btn-primary text-sm py-2 px-4 flex items-center gap-1.5">🚀 Create room</button>
+            <button onClick={() => setMpView('join')} className="btn-secondary text-sm py-2 px-4">🔗 Join room</button>
+            <button onClick={() => setMpView('create')} className="btn-primary text-sm py-2 px-4">🚀 Create room</button>
           </div>
         </div>
 
-        {/* Inputs Control Panel */}
-        <div className="flex flex-wrap items-center gap-3 mb-8">
-          <input
-            type="text"
-            placeholder="🔍 Search games..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="input-field w-full sm:max-w-xs py-2 text-sm bg-gray-900 border border-gray-800 rounded-xl px-3 text-white focus:outline-none focus:border-indigo-500"
-          />
+        <div className="flex flex-wrap gap-3 mb-8 items-center">
+          <input type="text" placeholder="🔍 Search games..." value={search}
+            onChange={e => setSearch(e.target.value)} className="input-field max-w-xs py-2 text-sm" />
           <div className="flex gap-2 flex-wrap">
-            {categories.map(cat => (
-              <button 
-                key={cat} 
-                onClick={() => setFilter(cat)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  filter === cat ? 'bg-indigo-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'
-                }`}
-              >
+            {cats.map(cat => (
+              <button key={cat} onClick={() => setFilter(cat)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${filter === cat ? 'bg-indigo-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}>
                 {cat}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Active Playable Grid Layer */}
-        {readyGames.length > 0 && (
+        {ready.length > 0 && (
           <>
-            <h2 className="text-xs text-gray-500 uppercase tracking-wider mb-4">
-              {filter === 'All' ? 'All games' : filter} · {readyGames.length} available
-            </h2>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">{filter === 'All' ? 'All games' : filter} · {ready.length} available</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-10">
-              {readyGames.map(game => (
-                <div key={game.id} className="card bg-gray-900 border border-gray-800 p-5 rounded-2xl group hover:border-gray-600 transition-all duration-200 flex flex-col">
+              {ready.map(game => (
+                <div key={game.id} className="card group hover:border-gray-600 transition-all duration-200 flex flex-col">
                   <div className="flex items-start justify-between mb-3">
                     <span className="text-4xl group-hover:scale-110 transition-transform inline-block">{game.emoji}</span>
-                    <span className={`text-xs border rounded-full px-2.5 py-0.5 ${CATEGORY_COLORS[game.cat] || 'text-white'}`}>
-                      {game.cat}
-                    </span>
+                    <span className={`text-xs border rounded-full px-2 py-0.5 ${CAT_COLORS[game.cat]}`}>{game.cat}</span>
                   </div>
-                  <h3 className="font-semibold text-white mb-1 text-lg">{game.name}</h3>
-                  <p className="text-sm text-gray-400 mb-4 flex-1 line-clamp-2">{game.desc}</p>
-                  
+                  <h3 className="font-semibold text-white mb-1">{game.name}</h3>
+                  <p className="text-sm text-gray-500 mb-4 flex-1">{game.desc}</p>
                   <div className="flex gap-2 flex-wrap mt-auto">
                     {game.modes.includes('single') && (
                       <button onClick={() => setSoloGame(game.id)} className="flex-1 btn-primary text-sm py-2">🎮 Solo</button>
                     )}
                     {game.modes.includes('duo') && (
-                      <button onClick={() => handleCreateRoomForGame(game.id)} className="flex-1 btn-secondary text-sm py-2">👥 Duo</button>
+                      <button onClick={() => setMpView('create')} className="flex-1 btn-secondary text-sm py-2">👥 Duo</button>
                     )}
                     {game.modes.includes('multi') && (
-                      <button 
-                        onClick={() => handleCreateRoomForGame(game.id)} 
-                        className="flex-1 bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/20 text-pink-400 font-semibold py-2 px-3 rounded-xl transition-all text-sm"
-                      >
-                        🌐 Multi
-                      </button>
+                      <button onClick={() => setMpView('create')} className="flex-1 bg-pink-500/20 hover:bg-pink-500/30 text-pink-400 font-semibold py-2 px-3 rounded-xl transition-all text-sm">🌐 Multi</button>
                     )}
                   </div>
                 </div>
@@ -217,39 +137,28 @@ const GameLobby = () => {
           </>
         )}
 
-        {/* In-Development Coming Soon Layer */}
-        {soonGames.length > 0 && (
+        {soon.length > 0 && (
           <>
-            <h2 className="text-xs text-gray-500 uppercase tracking-wider mb-4">Coming soon</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-10">
-              {soonGames.map(game => (
-                <div key={game.id} className="bg-gray-900/40 border border-gray-900 rounded-2xl p-4 opacity-40 select-none">
-                  <span className="text-3xl filter grayscale">{game.emoji}</span>
-                  <p className="font-medium text-gray-300 mt-2 text-sm">{game.name}</p>
-                  <p className="text-xs text-gray-600 mt-1 line-clamp-1">{game.desc}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mb-4">Coming soon</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {soon.map(game => (
+                <div key={game.id} className="bg-gray-900/50 border border-gray-800 rounded-2xl p-4 opacity-50">
+                  <span className="text-3xl">{game.emoji}</span>
+                  <p className="font-medium text-gray-400 mt-2 text-sm">{game.name}</p>
+                  <p className="text-xs text-gray-600 mt-1">{game.desc}</p>
                 </div>
               ))}
             </div>
           </>
         )}
 
-        {/* Absolute Empty Fallback State View */}
-        {readyGames.length === 0 && soonGames.length === 0 && (
-          <div className="text-center py-20 bg-gray-900/20 border border-gray-900 rounded-3xl">
+        {ready.length === 0 && soon.length === 0 && (
+          <div className="text-center py-20">
             <p className="text-4xl mb-3">🔍</p>
-            <p className="text-gray-400">No matches found for "{search}"</p>
-            <button 
-              onClick={() => { setSearch(''); setFilter('All'); }} 
-              className="px-4 py-2 mt-4 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-xl transition-colors"
-            >
-              Clear filters
-            </button>
+            <p className="text-gray-400">No games match "{search}"</p>
+            <button onClick={() => { setSearch(''); setFilter('All'); }} className="btn-secondary mt-4">Clear filters</button>
           </div>
         )}
-
-        <p className="text-center text-gray-700 text-xs mt-10">
-          Phase 4 — more multiplayer games coming soon!
-        </p>
       </div>
     </div>
   );

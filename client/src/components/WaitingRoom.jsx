@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import useSocket from '../hooks/useSocket';
+import sounds from '../utils/sounds';
 
 const WaitingRoom = ({ roomCode, room: initialRoom, onGameStart, onLeave }) => {
   const { user } = useAuth();
@@ -21,7 +22,10 @@ const WaitingRoom = ({ roomCode, room: initialRoom, onGameStart, onLeave }) => {
     const offs = [
       on('room_updated', ({ room: r }) => setRoom(r)),
 
-      on('countdown', ({ count }) => setCountdown(count)),
+      on('countdown', ({ count }) => {
+        setCountdown(count);
+        if (count > 0) sounds.beep(); else sounds.go();
+      }),
 
       on('game_start', ({ room: r }) => {
         setCountdown(null);

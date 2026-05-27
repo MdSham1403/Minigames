@@ -5,17 +5,17 @@ import Game2048             from '../games/Game2048';
 import Trivia               from '../games/Trivia';
 import TicTacToe            from '../games/TicTacToe';
 import Sudoku               from '../games/Sudoku';
-import Flappybird           from '../games/Flappybird';
+import FlappyBird           from '../games/FlappyBird';
 import Breakout             from '../games/Breakout';
-import Wordscramble         from '../games/Wordscramble';
+import WordScramble         from '../games/WordScramble';
 import MathBlaster          from '../games/MathBlaster';
-import ColorMatch           from '../games/Colormatch';
-import Whackamole           from '../games/Whackamole';
-import Rockpaperscissors    from '../games/Rockpaperscissors';
-import Simonsays            from '../games/Simonsays';
-import Reactiontime         from '../games/Reactiontime';
-import Numberpuzzle         from '../games/Numberpuzzle';
-import Connectfour          from '../games/ConnectFour';
+import ColorMatch           from '../games/ColorMatch';
+import WhackAMole           from '../games/WhackAMole';
+import RockPaperScissors    from '../games/RockPaperScissors';
+import SimonSays            from '../games/SimonSays';
+import ReactionTime         from '../games/ReactionTime';
+import NumberPuzzle         from '../games/NumberPuzzle';
+import ConnectFour          from '../games/ConnectFour';
 import Chess                from '../games/Chess';
 import Ludo                 from '../games/Ludo';
 import UNO                  from '../games/UNO';
@@ -31,17 +31,17 @@ const GAME_MAP = {
   trivia:       Trivia,
   tictactoe:    TicTacToe,
   sudoku:       Sudoku,
-  flappy:       Flappybird,
+  flappy:       FlappyBird,
   breakout:     Breakout,
-  wordscramble: Wordscramble,
-  mathblaster:  Mathblaster,
-  colormatch:   Colormatch,
-  whackamole:   Whackamole,
-  rps:          Rockpaperscissors,
-  simon:        Simonsays,
-  reaction:     Reactiontime,
-  numberpuzzle: Numberpuzzle,
-  connect4:     Connectfour,
+  wordscramble: WordScramble,
+  mathblaster:  MathBlaster,
+  colormatch:   ColorMatch,
+  whackamole:   WhackAMole,
+  rps:          RockPaperScissors,
+  simon:        SimonSays,
+  reaction:     ReactionTime,
+  numberpuzzle: NumberPuzzle,
+  connect4:     ConnectFour,
   chess:        Chess,
   ludo:         Ludo,
   uno:          UNO,

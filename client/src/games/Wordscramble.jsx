@@ -119,8 +119,10 @@ const WordScramble = ({ onBack }) => {
       });
       setStreak(newStreak);
       setFeedback('correct');
+      sounds.correct();
     } else {
       setFeedback('wrong');
+      sounds.wrong();
       setStreak(0);
       setTimeout(() => {
         setFeedback(null);

@@ -112,6 +112,12 @@ const Trivia = ({ onBack }) => {
     const streakBonus = newStreak > 1 ? (newStreak - 1) * 20 : 0;
     const gained = isCorrect ? 100 + timeBonus + diffBonus + streakBonus : 0;
 
+    if (isCorrect) {
+      if (newStreak > 2) sounds.streak(); else sounds.correct();
+    } else {
+      sounds.wrong();
+    }
+
     setStreak(newStreak);
     setScore(s => s + gained);
     setResults(r => [...r, { question: q.question, isCorrect, gained }]);
@@ -128,6 +134,7 @@ const Trivia = ({ onBack }) => {
 
   const finishGame = async (finalScore) => {
     setStatus('result');
+    sounds.win();
     setSaving(true);
     try {
       await api.post('/scores', { gameName: 'trivia', score: finalScore, mode: 'single' });
