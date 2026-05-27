@@ -90,7 +90,7 @@ const bestAIMove = (board) => {
 
 const COLORS = { R:'bg-red-500 shadow-red-500/50', Y:'bg-yellow-400 shadow-yellow-400/50' };
 
-const ConnectFour = ({ onBack }) => {
+const Connectfour = ({ onBack }) => {
   const [board, setBoard]   = useState(empty());
   const [turn, setTurn]     = useState('R');
   const [winLine, setWinLine] = useState(null);
@@ -243,4 +243,4 @@ const ConnectFour = ({ onBack }) => {
   );
 };
 
-export default ConnectFour;
+export default Connectfour;
