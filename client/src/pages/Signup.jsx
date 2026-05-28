@@ -97,6 +97,7 @@ const Signup = () => {
                 value={form.password}
                 onChange={handleChange}
                 className="input-field"
+                autoComplete="new-password" // <-- Added this
                 required
               />
             </div>
@@ -110,6 +111,7 @@ const Signup = () => {
                 value={form.confirm}
                 onChange={handleChange}
                 className="input-field"
+                autoComplete="new-password" // <-- Added this
                 required
               />
             </div>
