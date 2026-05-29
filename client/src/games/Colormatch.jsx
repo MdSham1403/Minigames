@@ -26,7 +26,7 @@ const genRound = () => {
 const TOTAL = 20;
 const TIME_PER_Q = 4;
 
-const ColorMatch = ({ onBack }) => {
+const Colormatch = ({ onBack }) => {
   const [status, setStatus]   = useState('idle');
   const [round, setRound]     = useState(null);
   const [qNum, setQNum]       = useState(0);
@@ -155,4 +155,4 @@ const ColorMatch = ({ onBack }) => {
   );
 };
 
-export default ColorMatch;
+export default Colormatch;

@@ -34,7 +34,7 @@ const scramble = (word) => {
 const ROUND_TIME = 30;
 const TOTAL_ROUNDS = 10;
 
-const WordScramble = ({ onBack }) => {
+const Wordscramble = ({ onBack }) => {
   const [status, setStatus]       = useState('idle');
   const [round, setRound]         = useState(0);
   const [current, setCurrent]     = useState(null);
@@ -229,4 +229,4 @@ const WordScramble = ({ onBack }) => {
   );
 };
 
-export default WordScramble;
+export default Wordscramble;

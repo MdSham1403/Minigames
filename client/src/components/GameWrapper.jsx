@@ -5,15 +5,15 @@ import Game2048             from '../games/Game2048';
 import Trivia               from '../games/Trivia';
 import TicTacToe            from '../games/TicTacToe';
 import Sudoku               from '../games/Sudoku';
-import FlappyBird           from '../games/FlappyBird';
+import Flappybird           from '../games/Flappybird';
 import Breakout             from '../games/Breakout';
-import WordScramble         from '../games/WordScramble';
+import Wordscramble         from '../games/Wordscramble';
 import MathBlaster          from '../games/MathBlaster';
-import ColorMatch           from '../games/ColorMatch';
+import Colormatch           from '../games/Colormatch';
 import WhackAMole           from '../games/WhackAMole';
 import Rockpaperscissors    from '../games/Rockpaperscissors';
 import Simonsays            from '../games/Simonsays';
-import ReactionTime         from '../games/ReactionTime';
+import Reactiontime         from '../games/Reactiontime';
 import NumberPuzzle         from '../games/NumberPuzzle';
 import ConnectFour          from '../games/ConnectFour';
 import Chess                from '../games/Chess';
@@ -31,17 +31,17 @@ const GAME_MAP = {
   trivia:       Trivia,
   tictactoe:    TicTacToe,
   sudoku:       Sudoku,
-  flappy:       FlappyBird,
+  flappy:       Flappybird,
   breakout:     Breakout,
-  wordscramble: WordScramble,
+  wordscramble: Wordscramble,
   mathblaster:  MathBlaster,
-  colormatch:   ColorMatch,
+  colormatch:   Colormatch,
   whackamole:   WhackAMole,
   rps:          Rockpaperscissors,
-  simon:        SimonSays,
-  reaction:     ReactionTime,
+  simon:        Simonsays,
+  reaction:     Reactiontime,
   numberpuzzle: NumberPuzzle,
-  connect4:     ConnectFour,
+  connect4:     Connectfour,
   chess:        Chess,
   ludo:         Ludo,
   uno:          UNO,
