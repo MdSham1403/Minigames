@@ -10,12 +10,12 @@ import Breakout             from '../games/Breakout';
 import Wordscramble         from '../games/Wordscramble';
 import MathBlaster          from '../games/MathBlaster';
 import Colormatch           from '../games/Colormatch';
-import WhackAMole           from '../games/WhackAMole';
+import Whackamole           from '../games/Whackamole';
 import Rockpaperscissors    from '../games/Rockpaperscissors';
 import Simonsays            from '../games/Simonsays';
 import Reactiontime         from '../games/Reactiontime';
-import NumberPuzzle         from '../games/NumberPuzzle';
-import ConnectFour          from '../games/ConnectFour';
+import Numberpuzzle         from '../games/Numberpuzzle';
+import Connectfour          from '../games/Connectfour';
 import Chess                from '../games/Chess';
 import Ludo                 from '../games/Ludo';
 import UNO                  from '../games/UNO';
@@ -36,11 +36,11 @@ const GAME_MAP = {
   wordscramble: Wordscramble,
   mathblaster:  MathBlaster,
   colormatch:   Colormatch,
-  whackamole:   WhackAMole,
+  whackamole:   Whackamole,
   rps:          Rockpaperscissors,
   simon:        Simonsays,
   reaction:     Reactiontime,
-  numberpuzzle: NumberPuzzle,
+  numberpuzzle: Numberpuzzle,
   connect4:     Connectfour,
   chess:        Chess,
   ludo:         Ludo,
