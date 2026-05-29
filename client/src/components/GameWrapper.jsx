@@ -11,7 +11,7 @@ import WordScramble         from '../games/WordScramble';
 import MathBlaster          from '../games/MathBlaster';
 import ColorMatch           from '../games/ColorMatch';
 import WhackAMole           from '../games/WhackAMole';
-import RockPaperScissors    from '../games/RockPaperScissors';
+import RockPaperScissors    from '../games/Rockpaperscissors';
 import SimonSays            from '../games/SimonSays';
 import ReactionTime         from '../games/ReactionTime';
 import NumberPuzzle         from '../games/NumberPuzzle';
@@ -37,7 +37,7 @@ const GAME_MAP = {
   mathblaster:  MathBlaster,
   colormatch:   ColorMatch,
   whackamole:   WhackAMole,
-  rps:          RockPaperScissors,
+  rps:          Rockpaperscissors,
   simon:        SimonSays,
   reaction:     ReactionTime,
   numberpuzzle: NumberPuzzle,
