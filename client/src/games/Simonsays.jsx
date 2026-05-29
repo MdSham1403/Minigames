@@ -9,7 +9,7 @@ const PADS = [
   { color: '#3b82f6', lit: '#93c5fd', label: '🔵' },
 ];
 
-const SimonSays = ({ onBack }) => {
+const Simonsays = ({ onBack }) => {
   const [sequence, setSequence]   = useState([]);
   const [playerSeq, setPlayerSeq] = useState([]);
   const [active, setActive]       = useState(null);
@@ -118,4 +118,4 @@ const SimonSays = ({ onBack }) => {
   );
 };
 
-export default SimonSays;
+export default Simonsays;
