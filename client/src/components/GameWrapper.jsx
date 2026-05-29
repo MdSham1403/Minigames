@@ -15,7 +15,6 @@ import Rockpaperscissors    from '../games/Rockpaperscissors';
 import Simonsays            from '../games/Simonsays';
 import Reactiontime         from '../games/Reactiontime';
 import Numberpuzzle         from '../games/Numberpuzzle';
-import Connectfour          from '../games/Connectfour';
 import Chess                from '../games/Chess';
 import Ludo                 from '../games/Ludo';
 import UNO                  from '../games/UNO';
@@ -41,7 +40,6 @@ const GAME_MAP = {
   simon:        Simonsays,
   reaction:     Reactiontime,
   numberpuzzle: Numberpuzzle,
-  connect4:     Connectfour,
   chess:        Chess,
   ludo:         Ludo,
   uno:          UNO,
