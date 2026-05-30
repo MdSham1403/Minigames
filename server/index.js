@@ -4,6 +4,7 @@ const http    = require('http');
 const { Server } = require('socket.io');
 const cors    = require('cors');
 
+// Route Imports
 const authRoutes   = require('./routes/auth');
 const scoresRoutes = require('./routes/scores');
 const roomsRoutes  = require('./routes/rooms');
@@ -14,22 +15,46 @@ const setupSocket  = require('./socket/roomManager');
 const app        = express();
 const httpServer = http.createServer(app);
 
+// ─── Auto-Switching CORS Origin Helper ────────────────────────────────────────
+const getCleanOrigin = () => {
+  // If CLIENT_URL exists (Production), use it. Otherwise, use localhost (Development).
+  const url = process.env.CLIENT_URL || 'http://localhost:5173';
+  return url.replace(/\/$/, ''); // Safely strips any accidental trailing slash
+};
+
+const allowedOrigin = getCleanOrigin();
+
+// ─── Socket.io Setup ──────────────────────────────────────────────────────────
 const io = new Server(httpServer, {
-  cors: { origin: process.env.CLIENT_URL || 'http://localhost:5173', methods: ['GET','POST'] },
+  cors: { 
+    origin: allowedOrigin, 
+    methods: ['GET', 'POST'],
+    credentials: true 
+  },
 });
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+// ─── Express Middleware ───────────────────────────────────────────────────────
+app.use(cors({ 
+  origin: allowedOrigin,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
 app.use(express.json());
 
+// ─── API Routes ───────────────────────────────────────────────────────────────
 app.use('/api/auth',   authRoutes);
 app.use('/api/scores', scoresRoutes);
 app.use('/api/rooms',  roomsRoutes);
-app.use('/api/admin',  adminRoutes);   // all protected by adminMiddleware inside
-app.use('/api/games',  gamesRoutes);   // public games config
+app.use('/api/admin',  adminRoutes);   // Protected by adminMiddleware inside
+app.use('/api/games',  gamesRoutes);   // Public games configurations
 
-app.get('/api/health', (req, res) => res.json({ status:'ok', message:'🎮 MiniGames server running!' }));
+// Health Check Endpoint
+app.get('/api/health', (req, res) => res.json({ status: 'ok', message: '🎮 MiniGames server running!' }));
 
+// Initialize WebSockets
 setupSocket(io);
 
+// ─── Start Server ─────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
-httpServer.listen(PORT, () => console.log(`🚀 Server → http://localhost:${PORT}`));
+httpServer.listen(PORT, () => console.log(`🚀 Server running on port ${PORT} → Origin: ${allowedOrigin}`));
