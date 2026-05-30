@@ -35,11 +35,11 @@ router.get('/leaderboard', async (req, res) => {
       query = `
         SELECT
           CASE WHEN u.leaderboard_visible = false THEN 'Anonymous'
-               ELSE u.username END                          AS username,
+               ELSE u.username END                                  AS username,
           CASE WHEN u.leaderboard_visible = false THEN '#888888'
-               ELSE u.avatar_color END                      AS avatar_color,
+               ELSE u.avatar_color END                              AS avatar_color,
           u.leaderboard_visible,
-          MAX(s.score)                                      AS best_score,
+          MAX(s.score)                                              AS best_score,
           s.game_name
         FROM scores s
         JOIN users u ON s.user_id = u.id
@@ -53,11 +53,11 @@ router.get('/leaderboard', async (req, res) => {
       query = `
         SELECT
           CASE WHEN u.leaderboard_visible = false THEN 'Anonymous'
-               ELSE u.username END                          AS username,
+               ELSE u.username END                                  AS username,
           CASE WHEN u.leaderboard_visible = false THEN '#888888'
-               ELSE u.avatar_color END                      AS avatar_color,
+               ELSE u.avatar_color END                              AS avatar_color,
           u.leaderboard_visible,
-          SUM(sub.best)                                     AS total_score
+          SUM(sub.best)                                              AS total_score
         FROM (
           SELECT user_id, game_name, MAX(score) AS best
           FROM scores GROUP BY user_id, game_name
@@ -96,7 +96,11 @@ router.get('/me', authMiddleware, async (req, res) => {
 
 // ─── PATCH /api/scores/privacy — toggle leaderboard visibility (protected) ───
 router.patch('/privacy', authMiddleware, async (req, res) => {
-  const { leaderboardVisible } = req.body;
+  // 🆕 Fix: Accept camelCase (leaderboardVisible) OR snake_case (leaderboard_visible)
+  const leaderboardVisible = req.body.leaderboardVisible !== undefined 
+    ? req.body.leaderboardVisible 
+    : req.body.leaderboard_visible;
+
   if (typeof leaderboardVisible !== 'boolean')
     return res.status(400).json({ message: 'leaderboardVisible must be true or false.' });
 
@@ -106,10 +110,12 @@ router.patch('/privacy', authMiddleware, async (req, res) => {
       [leaderboardVisible, req.user.id]
     );
     res.json({
+      success: true, // Added explicit true indicator for frontend checks
       message: leaderboardVisible
         ? 'Your username will now show on leaderboards.'
         : 'You will appear as Anonymous on leaderboards.',
       leaderboardVisible,
+      leaderboard_visible: leaderboardVisible // Return both forms for frontend fallback
     });
   } catch (err) {
     console.error('Privacy update error:', err.message);
