@@ -3,69 +3,94 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
 const GAME_META = {
-  snake:        { emoji: '🐍', label: 'Snake' },
-  memory:       { emoji: '🧠', label: 'Memory' },
-  '2048':       { emoji: '🎯', label: '2048' },
-  trivia:       { emoji: '❓', label: 'Trivia' },
-  tictactoe:    { emoji: '❌', label: 'Tic Tac Toe' },
-  sudoku:       { emoji: '🔢', label: 'Sudoku' },
-  flappy:       { emoji: '🐦', label: 'Flappy Bird' },
-  breakout:     { emoji: '🧱', label: 'Breakout' },
-  wordscramble: { emoji: '🔤', label: 'Word Scramble' },
-  mathblaster:  { emoji: '🧮', label: 'Math Blaster' },
-  colormatch:   { emoji: '🌈', label: 'Colour Match' },
-  whackamole:   { emoji: '🐹', label: 'Whack-a-Mole' },
-  rps:          { emoji: '✊', label: 'Rock Paper Scissors' },
-  simon:        { emoji: '🟢', label: 'Simon Says' },
-  reaction:     { emoji: '⚡', label: 'Reaction Time' },
-  numberpuzzle: { emoji: '🔷', label: '15 Puzzle' },
-  connect4:     { emoji: '🔴', label: 'Connect Four' },
-  chess:        { emoji: '♟', label: 'Chess' },
-  ludo:         { emoji: '🎲', label: 'Ludo' },
-  uno:          { emoji: '🃏', label: 'UNO' },
-  minesweeper:  { emoji: '💣', label: 'Minesweeper' },
-  tetris:       { emoji: '🟦', label: 'Tetris' },
-  hangman:      { emoji: '🪢', label: 'Hangman' },
-  battleship:   { emoji: '🚢', label: 'Battleship' },
+  snake:        { emoji:'🐍', label:'Snake' },
+  memory:       { emoji:'🧠', label:'Memory' },
+  '2048':       { emoji:'🎯', label:'2048' },
+  trivia:       { emoji:'❓', label:'Trivia' },
+  tictactoe:    { emoji:'❌', label:'Tic Tac Toe' },
+  sudoku:       { emoji:'🔢', label:'Sudoku' },
+  flappy:       { emoji:'🐦', label:'Flappy Bird' },
+  breakout:     { emoji:'🧱', label:'Breakout' },
+  wordscramble: { emoji:'🔤', label:'Word Scramble' },
+  mathblaster:  { emoji:'🧮', label:'Math Blaster' },
+  colormatch:   { emoji:'🌈', label:'Colour Match' },
+  whackamole:   { emoji:'🐹', label:'Whack-a-Mole' },
+  rps:          { emoji:'✊', label:'Rock Paper Scissors' },
+  simon:        { emoji:'🟢', label:'Simon Says' },
+  reaction:     { emoji:'⚡', label:'Reaction Time' },
+  numberpuzzle: { emoji:'🔷', label:'15 Puzzle' },
+  connect4:     { emoji:'🔴', label:'Connect Four' },
+  chess:        { emoji:'♟',  label:'Chess' },
+  ludo:         { emoji:'🎲', label:'Ludo' },
+  uno:          { emoji:'🃏', label:'UNO' },
+  minesweeper:  { emoji:'💣', label:'Minesweeper' },
+  tetris:       { emoji:'🟦', label:'Tetris' },
+  hangman:      { emoji:'🪢', label:'Hangman' },
+  battleship:   { emoji:'🚢', label:'Battleship' },
 };
 
 const ACHIEVEMENTS = [
-  { icon: '🎮', label: 'First game',      desc: 'Play your first game',          check: (s,t) => t >= 1 },
-  { icon: '🔟', label: '10 games played', desc: 'Play 10 games total',           check: (s,t) => t >= 10 },
-  { icon: '💯', label: '50 games played', desc: 'Play 50 games total',           check: (s,t) => t >= 50 },
-  { icon: '🧠', label: 'Memory master',   desc: 'Score 800+ in Memory',          check: (s) => s.some(r => r.game_name==='memory'  && r.best_score >= 800) },
-  { icon: '🐍', label: 'Snake charmer',   desc: 'Score 150+ in Snake',           check: (s) => s.some(r => r.game_name==='snake'    && r.best_score >= 150) },
-  { icon: '🎯', label: '2048 legend',     desc: 'Reach the 1024 tile',           check: (s) => s.some(r => r.game_name==='2048'     && r.best_score >= 1024) },
-  { icon: '❓', label: 'Trivia ace',      desc: 'Score 700+ in Trivia',          check: (s) => s.some(r => r.game_name==='trivia'   && r.best_score >= 700) },
-  { icon: '🔢', label: 'Sudoku solver',   desc: 'Complete a Sudoku puzzle',      check: (s) => s.some(r => r.game_name==='sudoku'   && r.best_score >= 1) },
-  { icon: '⚡', label: 'Lightning fast',  desc: 'Average reaction < 200ms',     check: (s) => s.some(r => r.game_name==='reaction' && r.best_score >= 800) },
-  { icon: '🎭', label: 'Variety pack',    desc: 'Play 5 different games',        check: (s) => s.length >= 5 },
-  { icon: '🏆', label: 'High scorer',     desc: 'Total best points over 2000',   check: (s) => s.reduce((a,r)=>a+Number(r.best_score),0) >= 2000 },
-  { icon: '🌈', label: 'Colourblind',     desc: 'Score 500+ in Colour Match',    check: (s) => s.some(r => r.game_name==='colormatch' && r.best_score >= 500) },
+  { icon:'🎮', label:'First game',       desc:'Play your first game',             check:(s,t)=>t>=1 },
+  { icon:'🔟', label:'10 games played',  desc:'Play 10 games total',              check:(s,t)=>t>=10 },
+  { icon:'💯', label:'50 games played',  desc:'Play 50 games total',              check:(s,t)=>t>=50 },
+  { icon:'🧠', label:'Memory master',    desc:'Score 800+ in Memory',             check:s=>s.some(r=>r.game_name==='memory'      &&r.best_score>=800) },
+  { icon:'🐍', label:'Snake charmer',    desc:'Score 150+ in Snake',              check:s=>s.some(r=>r.game_name==='snake'       &&r.best_score>=150) },
+  { icon:'🎯', label:'2048 legend',      desc:'Score 1024+ in 2048',             check:s=>s.some(r=>r.game_name==='2048'        &&r.best_score>=1024) },
+  { icon:'❓', label:'Trivia ace',       desc:'Score 700+ in Trivia',             check:s=>s.some(r=>r.game_name==='trivia'      &&r.best_score>=700) },
+  { icon:'🔢', label:'Sudoku solver',    desc:'Complete a Sudoku puzzle',         check:s=>s.some(r=>r.game_name==='sudoku'      &&r.best_score>=1) },
+  { icon:'⚡', label:'Lightning fast',   desc:'Score 800+ in Reaction Time',      check:s=>s.some(r=>r.game_name==='reaction'    &&r.best_score>=800) },
+  { icon:'🎭', label:'Variety pack',     desc:'Play 5 different games',           check:s=>s.length>=5 },
+  { icon:'🌍', label:'World explorer',   desc:'Play 10 different games',          check:s=>s.length>=10 },
+  { icon:'🏆', label:'High scorer',      desc:'Total best points over 2000',      check:s=>s.reduce((a,r)=>a+Number(r.best_score),0)>=2000 },
+  { icon:'🌈', label:'Colourful',        desc:'Score 500+ in Colour Match',       check:s=>s.some(r=>r.game_name==='colormatch'  &&r.best_score>=500) },
+  { icon:'♟',  label:'Chess master',    desc:'Win a game of Chess',              check:s=>s.some(r=>r.game_name==='chess'       &&r.best_score>=500) },
+  { icon:'🃏', label:'UNO champion',     desc:'Win a game of UNO',               check:s=>s.some(r=>r.game_name==='uno'         &&r.best_score>=300) },
+  { icon:'💣', label:'Minesweeper pro',  desc:'Clear a Minesweeper board',        check:s=>s.some(r=>r.game_name==='minesweeper' &&r.best_score>=1) },
 ];
 
+const MAX_SCORE = { snake:500,memory:2000,'2048':2048,trivia:1500,tictactoe:300,sudoku:2000,flappy:300,breakout:2000,wordscramble:2000,mathblaster:3000,colormatch:2000,whackamole:300,rps:500,simon:1000,reaction:1000,numberpuzzle:2000,connect4:200,chess:500,ludo:200,uno:300,minesweeper:2000,tetris:5000,hangman:2000,battleship:500 };
+
 const Profile = () => {
-  const { user, logout } = useAuth();
-  const [stats, setStats]   = useState([]);
+  const { user, logout }  = useAuth();
+  const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [leaderboardVisible, setLeaderboardVisible] = useState(true);
+  const [privacySaving, setPrivacySaving] = useState(false);
+  const [privacyMsg, setPrivacyMsg] = useState('');
 
   useEffect(() => {
+    // Fetch scores
     api.get('/scores/me')
       .then(r => setStats(r.data))
       .catch(() => {})
       .finally(() => setLoading(false));
+    // Fetch current privacy setting from /me
+    api.get('/auth/me')
+      .then(r => setLeaderboardVisible(r.data.leaderboardVisible ?? true))
+      .catch(() => {});
   }, []);
+
+  const togglePrivacy = async () => {
+    const newVal = !leaderboardVisible;
+    setPrivacySaving(true);
+    setPrivacyMsg('');
+    try {
+      await api.patch('/scores/privacy', { leaderboardVisible: newVal });
+      setLeaderboardVisible(newVal);
+      setPrivacyMsg(newVal ? '✅ Username visible on leaderboards.' : '✅ You\'ll appear as Anonymous.');
+    } catch {
+      setPrivacyMsg('❌ Failed to save. Try again.');
+    }
+    setPrivacySaving(false);
+    setTimeout(() => setPrivacyMsg(''), 3000);
+  };
 
   const totalGames    = stats.reduce((s, r) => s + Number(r.games_played), 0);
   const totalBest     = stats.reduce((s, r) => s + Number(r.best_score), 0);
-  const topGame       = [...stats].sort((a,b) => b.games_played - a.games_played)[0];
-  const gamesUnlocked = stats.length;
-
-  const joinDate = user?.createdAt
+  const earnedCount   = ACHIEVEMENTS.filter(a => a.check(stats, totalGames)).length;
+  const joinDate      = user?.createdAt
     ? new Date(user.createdAt).toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' })
     : '—';
-
-  const earnedCount = ACHIEVEMENTS.filter(a => a.check(stats, totalGames)).length;
 
   return (
     <div className="min-h-screen bg-gray-950 px-4 py-10">
@@ -78,7 +103,12 @@ const Profile = () => {
             {user?.username?.[0]?.toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl font-bold text-white truncate">{user?.username}</h1>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-2xl font-bold text-white truncate">{user?.username}</h1>
+              {user?.role === 'admin' && (
+                <span className="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/30">Admin</span>
+              )}
+            </div>
             <p className="text-gray-400 text-sm truncate">{user?.email}</p>
             <p className="text-gray-600 text-xs mt-1">Joined {joinDate}</p>
           </div>
@@ -91,10 +121,10 @@ const Profile = () => {
         {/* Summary stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Games played',   value: totalGames,                    icon: '🎮' },
-            { label: 'Total best pts', value: totalBest.toLocaleString(),    icon: '⭐' },
-            { label: 'Games tried',    value: `${gamesUnlocked}/16`,         icon: '🗺️' },
-            { label: 'Achievements',   value: `${earnedCount}/${ACHIEVEMENTS.length}`, icon: '🏅' },
+            { label:'Games played',   value:totalGames,                       icon:'🎮' },
+            { label:'Total best pts', value:totalBest.toLocaleString(),        icon:'⭐' },
+            { label:'Games tried',    value:`${stats.length}/24`,              icon:'🗺️' },
+            { label:'Achievements',   value:`${earnedCount}/${ACHIEVEMENTS.length}`, icon:'🏅' },
           ].map(s => (
             <div key={s.label} className="card text-center p-4">
               <p className="text-2xl mb-1">{s.icon}</p>
@@ -102,6 +132,38 @@ const Profile = () => {
               <p className="text-xs text-gray-500 mt-1">{s.label}</p>
             </div>
           ))}
+        </div>
+
+        {/* ── Privacy setting ── */}
+        <div className="card">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-semibold text-white mb-1">Leaderboard privacy</h2>
+              <p className="text-sm text-gray-400">
+                {leaderboardVisible
+                  ? 'Your username is visible to everyone on leaderboards.'
+                  : 'You appear as "Anonymous" on all leaderboards.'}
+              </p>
+              {privacyMsg && <p className="text-xs mt-2 text-indigo-400">{privacyMsg}</p>}
+            </div>
+            {/* Toggle switch */}
+            <button
+              onClick={togglePrivacy}
+              disabled={privacySaving}
+              aria-label="Toggle leaderboard visibility"
+              className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 flex-shrink-0 mt-0.5 disabled:opacity-50 ${
+                leaderboardVisible ? 'bg-indigo-500' : 'bg-gray-600'
+              }`}>
+              <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
+                leaderboardVisible ? 'translate-x-8' : 'translate-x-1'
+              }`} />
+            </button>
+          </div>
+          <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+            <span>🔒 Hidden</span>
+            <div className="flex-1 h-px bg-gray-700" />
+            <span>👤 Visible</span>
+          </div>
         </div>
 
         {/* Per-game stats */}
@@ -119,15 +181,14 @@ const Profile = () => {
           ) : (
             <div className="space-y-3">
               {stats.map((row, i) => {
-                const meta = GAME_META[row.game_name] || { emoji: '🎮', label: row.game_name };
-                const maxScore = { snake:500,memory:2000,'2048':2048,trivia:1500,tictactoe:300,sudoku:2000,flappy:300,breakout:2000,wordscramble:2000,mathblaster:3000,colormatch:2000,whackamole:300,rps:500,simon:1000,reaction:1000,numberpuzzle:2000 };
-                const pct = Math.min(100, (Number(row.best_score) / (maxScore[row.game_name] || 1000)) * 100);
+                const meta = GAME_META[row.game_name] || { emoji:'🎮', label:row.game_name };
+                const pct  = Math.min(100, (Number(row.best_score) / (MAX_SCORE[row.game_name] || 1000)) * 100);
                 return (
                   <div key={i} className="bg-gray-800 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{meta.emoji}</span>
-                        <span className="font-medium text-white">{meta.label}</span>
+                        <span className="font-medium text-white text-sm">{meta.label}</span>
                       </div>
                       <div className="text-right">
                         <span className="text-indigo-400 font-bold">{Number(row.best_score).toLocaleString()}</span>
@@ -136,7 +197,7 @@ const Profile = () => {
                     </div>
                     <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden mb-2">
                       <div className="h-full bg-indigo-500 rounded-full transition-all duration-700"
-                        style={{ width: `${pct}%` }} />
+                        style={{ width:`${pct}%` }} />
                     </div>
                     <p className="text-xs text-gray-500">{row.games_played} games played</p>
                   </div>
@@ -169,6 +230,7 @@ const Profile = () => {
             })}
           </div>
         </div>
+
       </div>
     </div>
   );

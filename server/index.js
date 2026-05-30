@@ -1,45 +1,35 @@
 require('dotenv').config();
 const express = require('express');
-const http = require('http');
+const http    = require('http');
 const { Server } = require('socket.io');
-const cors = require('cors');
+const cors    = require('cors');
 
-const authRoutes = require('./routes/auth');
+const authRoutes   = require('./routes/auth');
 const scoresRoutes = require('./routes/scores');
-const setupSocket = require('./socket/roomManager');
+const roomsRoutes  = require('./routes/rooms');
+const adminRoutes  = require('./routes/admin');
+const gamesRoutes  = require('./routes/games');
+const setupSocket  = require('./socket/roomManager');
 
-const app = express();
+const app        = express();
 const httpServer = http.createServer(app);
 
-// ─── Socket.io setup ──────────────────────────────────────────────────────────
 const io = new Server(httpServer, {
-  cors: {
-    origin: true,
-    methods: ['GET', 'POST'],
-  },
+  cors: { origin: process.env.CLIENT_URL || 'http://localhost:5173', methods: ['GET','POST'] },
 });
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: true,
-  credentials: true
-}));
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
 app.use(express.json());
 
-// ─── Routes ───────────────────────────────────────────────────────────────────
-app.use('/api/auth', authRoutes);
+app.use('/api/auth',   authRoutes);
 app.use('/api/scores', scoresRoutes);
+app.use('/api/rooms',  roomsRoutes);
+app.use('/api/admin',  adminRoutes);   // all protected by adminMiddleware inside
+app.use('/api/games',  gamesRoutes);   // public games config
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: '🎮 MiniGames server is running!' });
-});
+app.get('/api/health', (req, res) => res.json({ status:'ok', message:'🎮 MiniGames server running!' }));
 
-// ─── Socket.io ───────────────────────────────────────────────────────────────
 setupSocket(io);
 
-// ─── Start server ─────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
-httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+httpServer.listen(PORT, () => console.log(`🚀 Server → http://localhost:${PORT}`));

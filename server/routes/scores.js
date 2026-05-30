@@ -1,5 +1,5 @@
-const express = require('express');
-const pool = require('../db/pool');
+const express        = require('express');
+const pool           = require('../db/pool');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -7,10 +7,8 @@ const router = express.Router();
 // ─── POST /api/scores  — save a game score (protected) ───────────────────────
 router.post('/', authMiddleware, async (req, res) => {
   const { gameName, score, mode = 'single' } = req.body;
-
-  if (!gameName || score === undefined) {
+  if (!gameName || score === undefined)
     return res.status(400).json({ message: 'gameName and score are required.' });
-  }
 
   try {
     const result = await pool.query(
@@ -25,7 +23,8 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// ─── GET /api/scores/leaderboard?game=snake  — top 10 per game ───────────────
+// ─── GET /api/scores/leaderboard?game=snake — top 10 per game ─────────────────
+// Respects leaderboard_visible: hidden users show as "Anonymous"
 router.get('/leaderboard', async (req, res) => {
   const { game } = req.query;
 
@@ -34,25 +33,37 @@ router.get('/leaderboard', async (req, res) => {
 
     if (game) {
       query = `
-        SELECT u.username, u.avatar_color, MAX(s.score) as best_score, s.game_name
+        SELECT
+          CASE WHEN u.leaderboard_visible = false THEN 'Anonymous'
+               ELSE u.username END                          AS username,
+          CASE WHEN u.leaderboard_visible = false THEN '#888888'
+               ELSE u.avatar_color END                      AS avatar_color,
+          u.leaderboard_visible,
+          MAX(s.score)                                      AS best_score,
+          s.game_name
         FROM scores s
         JOIN users u ON s.user_id = u.id
         WHERE s.game_name = $1
-        GROUP BY u.username, u.avatar_color, s.game_name
+        GROUP BY u.username, u.avatar_color, u.leaderboard_visible, s.game_name
         ORDER BY best_score DESC
         LIMIT 10
       `;
       params = [game];
     } else {
-      // Overall leaderboard — sum of best scores across all games
       query = `
-        SELECT u.username, u.avatar_color, SUM(sub.best) as total_score
+        SELECT
+          CASE WHEN u.leaderboard_visible = false THEN 'Anonymous'
+               ELSE u.username END                          AS username,
+          CASE WHEN u.leaderboard_visible = false THEN '#888888'
+               ELSE u.avatar_color END                      AS avatar_color,
+          u.leaderboard_visible,
+          SUM(sub.best)                                     AS total_score
         FROM (
-          SELECT user_id, game_name, MAX(score) as best
+          SELECT user_id, game_name, MAX(score) AS best
           FROM scores GROUP BY user_id, game_name
         ) sub
         JOIN users u ON sub.user_id = u.id
-        GROUP BY u.username, u.avatar_color
+        GROUP BY u.username, u.avatar_color, u.leaderboard_visible
         ORDER BY total_score DESC
         LIMIT 10
       `;
@@ -71,7 +82,7 @@ router.get('/leaderboard', async (req, res) => {
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT game_name, MAX(score) as best_score, COUNT(*) as games_played
+      `SELECT game_name, MAX(score) AS best_score, COUNT(*) AS games_played
        FROM scores WHERE user_id = $1
        GROUP BY game_name ORDER BY best_score DESC`,
       [req.user.id]
@@ -79,6 +90,29 @@ router.get('/me', authMiddleware, async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error('My scores error:', err.message);
+    res.status(500).json({ message: 'Server error.' });
+  }
+});
+
+// ─── PATCH /api/scores/privacy — toggle leaderboard visibility (protected) ───
+router.patch('/privacy', authMiddleware, async (req, res) => {
+  const { leaderboardVisible } = req.body;
+  if (typeof leaderboardVisible !== 'boolean')
+    return res.status(400).json({ message: 'leaderboardVisible must be true or false.' });
+
+  try {
+    await pool.query(
+      'UPDATE users SET leaderboard_visible = $1 WHERE id = $2',
+      [leaderboardVisible, req.user.id]
+    );
+    res.json({
+      message: leaderboardVisible
+        ? 'Your username will now show on leaderboards.'
+        : 'You will appear as Anonymous on leaderboards.',
+      leaderboardVisible,
+    });
+  } catch (err) {
+    console.error('Privacy update error:', err.message);
     res.status(500).json({ message: 'Server error.' });
   }
 });

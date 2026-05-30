@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 
-const authMiddleware = (req, res, next) => {
+// Requires a valid JWT AND role === 'admin'
+// Always stack AFTER authMiddleware or use standalone on /api/admin routes
+const adminMiddleware = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token      = authHeader && authHeader.split(' ')[1];
 
@@ -9,11 +11,13 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, username, email, role }
+    if (decoded.role !== 'admin')
+      return res.status(403).json({ message: 'Admin access required.' });
+    req.user = decoded;
     next();
   } catch (err) {
     return res.status(403).json({ message: 'Invalid or expired token.' });
   }
 };
 
-module.exports = authMiddleware;
+module.exports = adminMiddleware;

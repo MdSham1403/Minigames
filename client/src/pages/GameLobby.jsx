@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import api from '../api/axios';
 import GameWrapper from '../components/GameWrapper';
 import CreateRoom from '../components/CreateRoom';
 import JoinRoom from '../components/JoinRoom';
@@ -53,6 +54,7 @@ const CAT_COLORS = {
 const GameLobby = () => {
   const { user } = useAuth();
   const [soloGame, setSoloGame] = useState(null);
+  const [gamesConfig, setGamesConfig] = useState({});
   const [mpView,   setMpView]   = useState(null);
   const [mpRoom,   setMpRoom]   = useState(null);
   const [filter,   setFilter]   = useState('All');
@@ -65,6 +67,13 @@ const GameLobby = () => {
   );
   const ready = filtered.filter(g => g.ready);
   const soon  = filtered.filter(g => !g.ready);
+
+  // Fetch game enabled/disabled config from server
+  useEffect(() => {
+    api.get('/games/config')
+      .then(r => setGamesConfig(r.data))
+      .catch(() => {}); // fails silently — all games shown if config unavailable
+  }, []);
 
   if (soloGame) return <GameWrapper gameId={soloGame} onBack={() => setSoloGame(null)} />;
   if (mpView === 'create') return (
@@ -122,7 +131,9 @@ const GameLobby = () => {
                   <p className="text-sm text-gray-500 mb-4 flex-1">{game.desc}</p>
                   <div className="flex gap-2 flex-wrap mt-auto">
                     {game.modes.includes('single') && (
-                      <button onClick={() => setSoloGame(game.id)} className="flex-1 btn-primary text-sm py-2">🎮 Solo</button>
+                      gamesConfig[game.id] === false
+                        ? <div className="flex-1 text-center py-2 rounded-xl bg-gray-700/40 text-gray-500 text-xs border border-gray-700 cursor-not-allowed">🔧 Maintenance</div>
+                        : <button onClick={() => setSoloGame(game.id)} className="flex-1 btn-primary text-sm py-2">🎮 Solo</button>
                     )}
                     {game.modes.includes('duo') && (
                       <button onClick={() => setMpView('create')} className="flex-1 btn-secondary text-sm py-2">👥 Duo</button>
