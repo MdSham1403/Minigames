@@ -38,8 +38,29 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  // 🆕 Added: Syncs UI toggle selections directly to the database layer
+  const updatePrivacy = async (isVisible) => {
+    const res = await api.put('/auth/privacy', { leaderboardVisible: isVisible });
+    
+    // Update local state reactive layer
+    setUser(prevUser => ({
+      ...prevUser,
+      leaderboardVisible: res.data.leaderboardVisible
+    }));
+
+    // Update localStorage structural keys securely
+    const stored = localStorage.getItem('mg_user');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      parsed.leaderboardVisible = res.data.leaderboardVisible;
+      localStorage.setItem('mg_user', JSON.stringify(parsed));
+    }
+
+    return res.data;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, updatePrivacy, loading }}>
       {children}
     </AuthContext.Provider>
   );

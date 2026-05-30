@@ -105,4 +105,33 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
+// ── PUT /api/auth/privacy ────────────────────────────────────────────────────
+// 🆕 Added: Updates ONLY leaderboard visibility safely
+router.put('/privacy', authMiddleware, async (req, res) => {
+  const { leaderboardVisible } = req.body;
+
+  if (typeof leaderboardVisible !== 'boolean') {
+    return res.status(400).json({ message: 'Invalid visibility value.' });
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE users SET leaderboard_visible = $1 WHERE id = $2 RETURNING leaderboard_visible',
+      [leaderboardVisible, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.json({
+      message: 'Privacy settings updated successfully!',
+      leaderboardVisible: result.rows[0].leaderboard_visible,
+    });
+  } catch (err) {
+    console.error('Privacy update error:', err.message);
+    res.status(500).json({ message: 'Server error. Failed to save settings.' });
+  }
+});
+
 module.exports = router;
