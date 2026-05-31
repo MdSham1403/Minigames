@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react'; // 🆕 Eye icon components imported
 
 const Login = () => {
   const { login } = useAuth();
@@ -9,6 +10,7 @@ const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 🆕 Toggle state
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -66,15 +68,32 @@ const Login = () => {
 
             <div>
               <label className="block text-sm text-gray-400 mb-2">Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="••••••••"
-                value={form.password}
-                onChange={handleChange}
-                className="input-field"
-                required
-              />
+              
+              {/* 🆕 Relative wrapper so the button aligns neatly overlaying the input box */}
+              <div className="relative flex items-center">
+                <input
+                  type={showPassword ? 'text' : 'password'} // 🆕 Dynamically flips types
+                  name="password"
+                  placeholder="••••••••"
+                  value={form.password}
+                  onChange={handleChange}
+                  className="input-field w-full pr-10" // 🆕 Added pr-10 so characters don't slide under icon
+                  required
+                />
+                
+                {/* 🆕 Catchy interactive button overlay */}
+                <button
+                  type="button" // 🚨 Crucial: type="button" prevents accidental form submissions
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-gray-400 hover:text-indigo-400 focus:outline-none transition-colors duration-150 p-1 rounded-md hover:bg-gray-800/40"
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} className="animate-[pulse_0.15s_ease-in-out_1]" />
+                  ) : (
+                    <Eye size={18} className="animate-[scale_0.15s_ease-in-out_1]" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <button

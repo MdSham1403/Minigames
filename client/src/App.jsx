@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute     from './components/AdminRoute';
 import Navbar         from './components/Navbar';
+import GuestRoute     from './components/GuestRoute'; 
 
 import Home        from './pages/Home';
 import Login       from './pages/Login';
@@ -17,14 +18,25 @@ const App = () => (
     <BrowserRouter>
       <Navbar />
       <Routes>
+        {/* Public Landing Page */}
         <Route path="/"            element={<Home />} />
-        <Route path="/login"       element={<Login />} />
-        <Route path="/signup"      element={<Signup />} />
+        
+        {/* 🔒 Guest Only Routes: Safe from duplicate overrides now */}
+        <Route path="/login"       element={<GuestRoute><Login /></GuestRoute>} />
+        <Route path="/signup"      element={<GuestRoute><Signup /></GuestRoute>} />
+        
+        {/* Public Scoreboards */}
         <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/lobby"   element={<ProtectedRoute><GameLobby /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/admin"   element={<AdminRoute><AdminPanel /></AdminRoute>} />
-        <Route path="*"        element={<Navigate to="/" replace />} />
+        
+        {/* 🛡️ Protected User Routes */}
+        <Route path="/lobby"       element={<ProtectedRoute><GameLobby /></ProtectedRoute>} />
+        <Route path="/profile"     element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        
+        {/* ⚙️ Protected Admin Route */}
+        <Route path="/admin"       element={<AdminRoute><AdminPanel /></AdminRoute>} />
+        
+        {/* Fallback Catch-All */}
+        <Route path="*"            element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   </AuthProvider>

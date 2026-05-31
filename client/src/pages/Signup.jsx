@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Eye, EyeOff } from 'lucide-react'; // 🆕 Eye icon components imported
 
 const Signup = () => {
   const { signup } = useAuth();
@@ -9,6 +10,10 @@ const Signup = () => {
   const [form, setForm] = useState({ username: '', email: '', password: '', confirm: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // 🆕 Separate toggle states so clicking one doesn't open both fields simultaneously
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -90,30 +95,60 @@ const Signup = () => {
 
             <div>
               <label className="block text-sm text-gray-400 mb-2">Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Min. 6 characters"
-                value={form.password}
-                onChange={handleChange}
-                className="input-field"
-                autoComplete="new-password" // <-- Added this
-                required
-              />
+              
+              {/* 🆕 Password relative wrapper */}
+              <div className="relative flex items-center">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="Min. 6 characters"
+                  value={form.password}
+                  onChange={handleChange}
+                  className="input-field w-full pr-10"
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-gray-400 hover:text-indigo-400 focus:outline-none transition-colors duration-150 p-1 rounded-md hover:bg-gray-800/40"
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} className="animate-[pulse_0.15s_ease-in-out_1]" />
+                  ) : (
+                    <Eye size={18} className="animate-[scale_0.15s_ease-in-out_1]" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <div>
               <label className="block text-sm text-gray-400 mb-2">Confirm password</label>
-              <input
-                type="password"
-                name="confirm"
-                placeholder="••••••••"
-                value={form.confirm}
-                onChange={handleChange}
-                className="input-field"
-                autoComplete="new-password" // <-- Added this
-                required
-              />
+              
+              {/* 🆕 Confirm Password relative wrapper */}
+              <div className="relative flex items-center">
+                <input
+                  type={showConfirm ? 'text' : 'password'}
+                  name="confirm"
+                  placeholder="••••••••"
+                  value={form.confirm}
+                  onChange={handleChange}
+                  className="input-field w-full pr-10"
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute right-3 text-gray-400 hover:text-indigo-400 focus:outline-none transition-colors duration-150 p-1 rounded-md hover:bg-gray-800/40"
+                >
+                  {showConfirm ? (
+                    <EyeOff size={18} className="animate-[pulse_0.15s_ease-in-out_1]" />
+                  ) : (
+                    <Eye size={18} className="animate-[scale_0.15s_ease-in-out_1]" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <button
